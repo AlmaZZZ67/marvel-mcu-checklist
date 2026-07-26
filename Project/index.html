@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCU Чек-лист — Киновселенная Marvel</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#0d0d12;--bg-2:#15151d;--bg-3:#1e1e2a;--accent:#e23636;--accent-2:#ff4757;--text:#e8e8ee;--muted:#8a8a99;--border:#2a2a38;--done:#2ecc71;--film-color:#3498db;--series-color:#9b59b6;--special-color:#f39c12}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.top-nav{background:linear-gradient(90deg,#0d0d12 0%,#1a0a0a 100%);border-bottom:2px solid var(--accent);padding:12px 25px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:20px;font-weight:900;letter-spacing:2px;color:var(--accent);cursor:pointer}
+.nav-logo span{color:var(--text)}
+.nav-links{display:flex;gap:8px;margin-left:auto}
+.nav-link{padding:8px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600}
+.nav-link:hover{border-color:var(--accent)}
+.nav-link.active{background:var(--accent);border-color:var(--accent);color:white}
+.page{display:none;flex:1}
+.page.active{display:flex;flex-direction:column}
+.home-hero{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:60px 8%;position:relative;min-height:calc(100vh - 60px);background-image:url('1.png');background-size:cover;background-position:center;background-color:var(--bg)}
+.home-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,18,0.55) 0%,rgba(13,13,18,0.95) 100%);pointer-events:none}
+.home-content{position:relative;z-index:2;max-width:700px}
+.home-badge{display:inline-block;padding:6px 14px;background:rgba(226,54,54,0.2);border:1px solid var(--accent);color:var(--accent);border-radius:20px;font-size:12px;font-weight:700;margin-bottom:20px}
+.home-title{font-size:clamp(40px,7vw,80px);font-weight:900;margin-bottom:10px}
+.home-title .red{color:var(--accent)}
+.home-subtitle{font-size:clamp(20px,3vw,32px);margin-bottom:30px}
+.home-description{font-size:17px;line-height:1.7;margin-bottom:50px;max-width:600px}
+.home-description strong{color:var(--accent-2)}
+.home-buttons{display:flex;gap:20px;flex-wrap:wrap}
+.home-btn{flex:1;min-width:260px;padding:30px;background:rgba(21,21,29,0.75);border:1px solid var(--border);border-radius:16px;cursor:pointer;text-align:left;transition:all 0.3s;text-decoration:none;color:inherit}
+.home-btn:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 15px 40px rgba(226,54,54,0.3)}
+.home-btn-icon{font-size:40px;margin-bottom:15px;display:block}
+.home-btn-title{font-size:22px;font-weight:800;margin-bottom:8px}
+.home-btn-desc{font-size:14px;color:var(--muted)}
+.home-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+.home-stat-num{font-size:32px;font-weight:900;color:var(--accent)}
+.home-stat-label{font-size:12px;color:var(--text);text-transform:uppercase}
+.checklist-layout{display:flex;flex:1;padding-left:90px}
+.checklist-header{background:var(--bg-2);border-bottom:1px solid var(--border);padding:15px 25px 15px 115px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.search-box{flex:1;min-width:200px;position:relative}
+.search-box input{width:100%;padding:10px 15px 10px 40px;background:var(--bg-3);border:1px solid var(--border);border-radius:25px;color:var(--text);font-size:14px}
+.search-box input:focus{outline:none;border-color:var(--accent)}
+.search-box::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{padding:8px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600}
+.filter-btn:hover{background:var(--bg-2);border-color:var(--accent)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:white}
+.progress-sidebar{width:90px;background:var(--bg-2);border-right:1px solid var(--border);padding:25px 10px;display:flex;flex-direction:column;align-items:center;position:fixed;left:0;top:60px;height:calc(100vh - 60px);z-index:50}
+.progress-label{font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;text-align:center}
+.progress-track{width:14px;flex:1;background:var(--bg-3);border-radius:10px;position:relative;overflow:hidden;border:1px solid var(--border)}
+.progress-fill{position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column-reverse;transition:height 0.5s}
+.progress-segment{width:100%;transition:all 0.3s}
+.progress-segment:hover{opacity:0.8;transform:scaleX(1.2)}
+.progress-percent{font-size:22px;font-weight:900;color:var(--accent);margin-top:12px}
+.progress-count{font-size:11px;color:var(--muted);margin-top:4px;text-align:center}
+.progress-legend{margin-top:15px;display:flex;flex-direction:column;gap:6px;font-size:10px}
+.legend-item{display:flex;align-items:center;gap:5px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.checklist-main{flex:1;padding:30px 40px;overflow-x:hidden}
+.phase-section{margin-bottom:40px}
+.phase-title{font-size:26px;font-weight:900;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:12px}
+.phase-badge{background:var(--accent);color:white;padding:4px 12px;border-radius:6px;font-size:14px}
+.phase-progress{margin-left:auto;font-size:14px;color:var(--muted)}
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}
+.item-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;transition:all 0.35s;cursor:pointer;position:relative;overflow:hidden}
+.item-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--border);transition:background 0.3s}
+.item-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.4)}
+.item-card.done{background:linear-gradient(90deg,rgba(46,204,113,0.08) 0%,var(--bg-2) 100%)}
+.item-card.done::before{background:var(--done)}
+.item-card.expanded{grid-column:1/-1;border-color:var(--accent);box-shadow:0 10px 30px rgba(226,54,54,0.2);transform:none}
+.item-header{padding:16px;display:flex;align-items:center;gap:12px}
+.checkbox{width:26px;height:26px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;background:var(--bg-3);cursor:pointer;z-index:2}
+.checkbox:hover{border-color:var(--done);transform:scale(1.1)}
+.item-card.done .checkbox{background:var(--done);border-color:var(--done);box-shadow:0 0 10px rgba(46,204,113,0.5)}
+.checkbox::after{content:"✓";color:white;font-weight:900;font-size:16px;opacity:0;transform:scale(0);transition:all 0.2s}
+.item-card.done .checkbox::after{opacity:1;transform:scale(1)}
+.item-info{flex:1;min-width:0}
+.item-title{font-size:15px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-card.done .item-title{text-decoration:line-through;opacity:0.6}
+.item-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.item-type{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase}
+.type-film{background:var(--film-color);color:white}
+.type-series{background:var(--series-color);color:white}
+.type-special{background:var(--special-color);color:white}
+.expand-indicator{color:var(--muted);font-size:18px;transition:transform 0.3s;flex-shrink:0}
+.item-card.expanded .expand-indicator{transform:rotate(180deg);color:var(--accent)}
+.item-details{max-height:0;overflow:hidden;transition:max-height 0.4s}
+.item-card.expanded .item-details{max-height:2000px}
+.item-details-inner{padding:20px 16px;display:grid;grid-template-columns:200px 1fr;gap:25px;border-top:1px solid var(--border)}
+.poster-box{width:200px;height:300px;border-radius:10px;overflow:hidden;position:relative;flex-shrink:0;box-shadow:0 8px 25px rgba(0,0,0,0.5)}
+.poster-box img{width:100%;height:100%;object-fit:cover;display:block}
+.poster-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--bg-3) 0%,var(--bg) 100%);border:2px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:10px}
+.poster-icon{font-size:40px;margin-bottom:8px;opacity:0.5}
+.poster-text{opacity:0.7;font-size:11px;line-height:1.4}
+.info-block{display:flex;flex-direction:column;gap:12px}
+.info-title{font-size:22px;font-weight:800;color:var(--text);line-height:1.2}
+.info-meta{display:flex;gap:15px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.info-meta-item{display:flex;align-items:center;gap:6px}
+.info-meta-item strong{color:var(--text);font-weight:600}
+.info-description{font-size:14px;line-height:1.6;color:#c8c8d2;margin-top:4px}
+.info-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.info-tag{padding:4px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:12px;font-size:11px;color:var(--muted)}
+.release-status{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(243,156,18,0.15);border:1px solid var(--warning);border-radius:8px;color:var(--warning);font-size:12px;font-weight:600;margin-top:8px}
+.episodes-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.episodes-title{font-size:16px;font-weight:700;margin-bottom:15px;color:var(--text);display:flex;align-items:center;gap:8px}
+.episodes-title::before{content:"📺"}
+.episode-item{display:flex;align-items:center;gap:12px;padding:12px 15px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all 0.2s}
+.episode-item:hover{border-color:var(--accent);background:var(--bg-2)}
+.episode-item.watched{background:rgba(46,204,113,0.08);border-color:var(--done)}
+.episode-checkbox{width:22px;height:22px;border:2px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;background:var(--bg-2)}
+.episode-item.watched .episode-checkbox{background:var(--done);border-color:var(--done)}
+.episode-checkbox::after{content:"✓";color:white;font-weight:900;font-size:14px;opacity:0;transform:scale(0);transition:all 0.2s}
+.episode-item.watched .episode-checkbox::after{opacity:1;transform:scale(1)}
+.episode-info{flex:1;min-width:0}
+.episode-number{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:2px}
+.episode-title{font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.episode-item.watched .episode-title{text-decoration:line-through;opacity:0.6}
+.no-results{text-align:center;padding:60px 20px;color:var(--muted);font-size:18px}
+.profile-page{flex:1;padding:40px 6%;overflow-y:auto}
+.profile-header{margin-bottom:40px}
+.profile-greeting{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.profile-title{font-size:clamp(32px,5vw,48px);font-weight:900;margin-bottom:8px}
+.profile-title .red{color:var(--accent)}
+.profile-sub{color:var(--muted);font-size:16px}
+.profile-grid{display:grid;grid-template-columns:320px 1fr;gap:30px;margin-bottom:40px}
+@media(max-width:900px){.profile-grid{grid-template-columns:1fr}}
+.circle-card{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.circle-progress{position:relative;width:200px;height:200px;margin-bottom:20px}
+.circle-progress svg{transform:rotate(-90deg);width:100%;height:100%}
+.circle-progress circle{fill:none;stroke-width:12;stroke-linecap:round}
+.circle-bg{stroke:var(--bg-3)}
+.circle-fg{stroke:url(#gradient);transition:stroke-dashoffset 1s;filter:drop-shadow(0 0 8px rgba(226,54,54,0.6))}
+.circle-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.circle-percent{font-size:48px;font-weight:900;color:var(--accent);line-height:1}
+.circle-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:6px}
+.circle-count{font-size:16px;color:var(--text);margin-top:10px}
+.circle-count strong{color:var(--done)}
+.stats-card{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px}
+.stats-title{font-size:18px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.stats-title::before{content:"";width:4px;height:20px;background:var(--accent);border-radius:2px}
+.phase-stat{margin-bottom:18px}
+.phase-stat:last-child{margin-bottom:0}
+.phase-stat-head{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px}
+.phase-stat-name{font-weight:600}
+.phase-stat-num{color:var(--muted);font-size:13px}
+.phase-stat-bar{height:8px;background:var(--bg-3);border-radius:4px;overflow:hidden}
+.phase-stat-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:4px;transition:width 0.8s;box-shadow:0 0 8px rgba(226,54,54,0.4)}
+.recent-section{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px}
+.recent-title{font-size:18px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.recent-title::before{content:"";width:4px;height:20px;background:var(--done);border-radius:2px}
+.recent-list{display:flex;flex-direction:column;gap:10px}
+.recent-item{display:flex;align-items:center;gap:15px;padding:12px 15px;background:var(--bg-3);border-radius:10px;transition:all 0.2s}
+.recent-item:hover{background:var(--bg);transform:translateX(4px)}
+.recent-num{font-size:18px;font-weight:900;color:var(--accent);min-width:30px}
+.recent-info{flex:1;min-width:0}
+.recent-name{font-weight:600;font-size:14px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-meta{font-size:12px;color:var(--muted);display:flex;gap:10px}
+.recent-date{font-size:12px;color:var(--muted);white-space:nowrap}
+.recent-empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.recent-empty-icon{font-size:48px;margin-bottom:10px;opacity:0.5}
+.profile-actions{margin-top:30px;display:flex;gap:15px;flex-wrap:wrap}
+.btn-primary,.btn-secondary{padding:14px 28px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--accent);color:white;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-2);box-shadow:0 0 20px rgba(226,54,54,0.5);transform:translateY(-2px)}
+.btn-secondary{background:var(--bg-3);color:var(--text);border-color:var(--border)}
+.btn-secondary:hover{border-color:var(--accent);background:var(--bg-2)}
+@media(max-width:768px){.top-nav{padding:10px 15px}.nav-logo{font-size:16px}.nav-link{padding:6px 12px;font-size:12px}.home-hero{padding:40px 5%}.checklist-header{padding:15px 15px 15px 85px}.checklist-layout{padding-left:70px}.progress-sidebar{width:70px;padding:15px 5px}.progress-percent{font-size:18px}.progress-legend{display:none}.checklist-main{padding:20px 15px}.items-grid{grid-template-columns:1fr}.phase-title{font-size:20px}.profile-page{padding:25px 15px}.item-details-inner{grid-template-columns:1fr}.poster-box{width:100%;height:280px;margin:0 auto}}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg-3);border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div class="nav-logo" onclick="navigate('home')">MARVEL<span>·MCU</span></div>
+  <div class="nav-links">
+    <a class="nav-link" data-page="home" onclick="navigate('home')">🏠 Главная</a>
+    <a class="nav-link" data-page="checklist" onclick="navigate('checklist')">✅ Чек-лист</a>
+    <a class="nav-link" data-page="profile" onclick="navigate('profile')">👤 Мой прогресс</a>
+  </div>
+</nav>
+
+<section class="page" id="page-home">
+  <div class="home-hero">
+    <div class="home-content">
+      <div class="home-badge">★ Киновселенная Marvel</div>
+      <h1 class="home-title"><span class="red">MARVEL</span>·MCU</h1>
+      <p class="home-subtitle">Твой личный чек-лист киновселенной</p>
+      <p class="home-description">Отслеживай все <strong>фильмы</strong>, <strong>сериалы</strong> и <strong>спецвыпуски</strong> Киновселенной Marvel в одном месте. Отмечай просмотренное, смотри свой прогресс в реальном времени и никогда не теряйся в хронологии фаз.</p>
+      <div class="home-buttons">
+        <a class="home-btn" onclick="navigate('checklist')"><span class="home-btn-icon">✅</span><div class="home-btn-title">Чек-лист</div><div class="home-btn-desc">Перейти к списку всех фильмов и сериалов по фазам.</div></a>
+        <a class="home-btn" onclick="navigate('profile')"><span class="home-btn-icon">👤</span><div class="home-btn-title">Мой прогресс</div><div class="home-btn-desc">Посмотри свой общий процент и статистику.</div></a>
+      </div>
+      <div class="home-stats">
+        <div><div class="home-stat-num" id="statTotal">0</div><div class="home-stat-label">Всего проектов</div></div>
+        <div><div class="home-stat-num" id="statFilms">0</div><div class="home-stat-label">Фильмов</div></div>
+        <div><div class="home-stat-num" id="statSeries">0</div><div class="home-stat-label">Сериалов</div></div>
+        <div><div class="home-stat-num" id="statPhases">6</div><div class="home-stat-label">Фаз</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-checklist">
+  <div class="checklist-header">
+    <div class="search-box"><input type="text" id="searchInput" placeholder="Поиск фильма или сериала..."></div>
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="film">🎬 Фильмы</button>
+      <button class="filter-btn" data-filter="series">📺 Сериалы</button>
+      <button class="filter-btn" data-filter="special">🎃 Спецвыпуски</button>
+      <button class="filter-btn" data-filter="phase-1">Фаза 1</button>
+      <button class="filter-btn" data-filter="phase-2">Фаза 2</button>
+      <button class="filter-btn" data-filter="phase-3">Фаза 3</button>
+      <button class="filter-btn" data-filter="phase-4">Фаза 4</button>
+      <button class="filter-btn" data-filter="phase-5">Фаза 5</button>
+      <button class="filter-btn" data-filter="phase-6">Фаза 6</button>
+    </div>
+  </div>
+  <div class="checklist-layout">
+    <aside class="progress-sidebar">
+      <div class="progress-label">Прогресс</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="height:0%"></div></div>
+      <div class="progress-percent" id="progressPercent">0%</div>
+      <div class="progress-count" id="progressCount">0/0</div>
+      <div class="progress-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--film-color)"></div><span>Фильмы</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--series-color)"></div><span>Сериалы</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--special-color)"></div><span>Спец</span></div>
+      </div>
+    </aside>
+    <main class="checklist-main" id="mainContent"></main>
+  </div>
+</section>
+
+<section class="page" id="page-profile">
+  <div class="profile-page">
+    <div class="profile-header">
+      <div class="profile-greeting">Личный кабинет</div>
+      <h1 class="profile-title">Мой <span class="red">прогресс</span></h1>
+      <p class="profile-sub">Статистика просмотра Киновселенной Marvel</p>
+    </div>
+    <div class="profile-grid">
+      <div class="circle-card">
+        <div class="circle-progress">
+          <svg viewBox="0 0 200 200"><defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e23636"/><stop offset="100%" stop-color="#ff4757"/></linearGradient></defs>
+          <circle class="circle-bg" cx="100" cy="100" r="88"/>
+          <circle class="circle-fg" id="circleFg" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="553"/>
+          </svg>
+          <div class="circle-text"><div class="circle-percent" id="circlePercent">0%</div><div class="circle-label">Пройдено</div></div>
+        </div>
+        <div class="circle-count">Просмотрено: <strong id="profileCount">0 из 0</strong></div>
+      </div>
+      <div class="stats-card"><div class="stats-title">Статистика по фазам</div><div id="phaseStats"></div></div>
+    </div>
+    <div class="recent-section"><div class="recent-title">Последние просмотренные</div><div class="recent-list" id="recentList"></div></div>
+    <div class="profile-actions">
+      <a class="btn-primary" onclick="navigate('checklist')">✅ Перейти к чек-листу</a>
+      <a class="btn-secondary" onclick="navigate('home')">🏠 На главную</a>
+    </div>
+  </div>
+</section>
+
+<script>
+const CURRENT_YEAR=2026,STORAGE_KEY="mcu_checklist_v8";
+let watched={},watchedEpisodes={},expandedId=null,currentFilter="all",currentSearch="";
+
+const mcuData={
+  "phase-1":{title:"Фаза 1",items:[
+    {id:"iron1",title:"Железный человек",year:2008,type:"film",director:"Джон Фавро",duration:"126 мин",watchOrder:3,poster:"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",description:"Тони Старк создаёт бронированный костюм.",tags:["Тони Старк","Пеппер Поттс"]},
+    {id:"hulk1",title:"Невероятный Халк",year:2008,type:"film",director:"Луи Летеррье",duration:"112 мин",watchOrder:5,poster:"https://m.media-amazon.com/images/M/MV5BMTUyNzk3MjA1OF5BMl5BanBnXkFtZTcwMTE1Njg2MQ@@._V1_SX300.jpg",description:"Брюс Бэннер превращается в Халка.",tags:["Брюс Бэннер","Бетти Росс"]},
+    {id:"iron2",title:"Железный человек 2",year:2010,type:"film",director:"Джон Фавро",duration:"124 мин",watchOrder:4,poster:"https://m.media-amazon.com/images/M/MV5BMTM0MDgwNjMyMl5BMl5BanBnXkFtZTcwNTg3NzAzMw@@._V1_SX300.jpg",description:"Мир узнал, что Тони Старк — Железный человек.",tags:["Тони Старк","Чёрная Вдова"]},
+    {id:"thor1",title:"Тор",year:2011,type:"film",director:"Кеннет Брана",duration:"115 мин",watchOrder:6,poster:"https://m.media-amazon.com/images/M/MV5BMTYxMjA5NDMzNV5BMl5BanBnXkFtZTcwOTk2Mjk3NQ@@._V1_SX300.jpg",description:"Бог Тор изгнан из Асгарда на Землю.",tags:["Тор","Локи"]},
+    {id:"cap1",title:"Первый мститель",year:2011,type:"film",director:"Джо Джонстон",duration:"124 мин",watchOrder:1,poster:"https://m.media-amazon.com/images/M/MV5BMTYzOTc2NzU3N15BMl5BanBnXkFtZTcwNjY3MDE3NQ@@._V1_SX300.jpg",description:"Стив Роджерс становится суперсолдатом.",tags:["Стив Роджерс","Баки Барнс"]},
+    {id:"avengers1",title:"Мстители",year:2012,type:"film",director:"Джосс Уидон",duration:"143 мин",watchOrder:7,poster:"https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGI2YTI1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg",description:"Локи возвращается с армией читаури.",tags:["Команда","Локи"]},
+    {id:"captain2",title:"Капитан Марвел",year:2019,type:"film",director:"Анна Боден",duration:"124 мин",watchOrder:2,poster:"https://m.media-amazon.com/images/M/MV5BMTE0YWFmOTMtYTU2ZS00ZTIxLWE3OTEtYTNiYzBkZjViZThiXkEyXkFqcGdeQXVyODMzMzQ4OTI@._V1_SX300.jpg",description:"Кэрол Дэнверс — могущественная героиня.",tags:["Кэрол Дэнверс","Ник Фьюри"]}
+  ]},
+  "phase-2":{title:"Фаза 2",items:[
+    {id:"iron3",title:"Железный человек 3",year:2013,type:"film",director:"Шейн Блэк",duration:"130 мин",watchOrder:8,poster:"https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_SX300.jpg",description:"Тони страдает от панических атак.",tags:["Тони Старк","Мандарин"]},
+    {id:"thor2",title:"Тор 2: Царство тьмы",year:2013,type:"film",director:"Алан Тейлор",duration:"112 мин",watchOrder:9,poster:"https://m.media-amazon.com/images/M/MV5BMTQyNzAwOTUxOF5BMl5BanBnXkFtZTcwMTE0OTc5OQ@@._V1_SX300.jpg",description:"Тёмные эльфы хотят погрузить вселенную во мрак.",tags:["Тор","Локи"]},
+    {id:"cap2",title:"Первый мститель: Другая война",year:2014,type:"film",director:"Братья Руссо",duration:"136 мин",watchOrder:10,poster:"https://m.media-amazon.com/images/M/MV5BMzA2NDkwODAwM15BMl5BanBnXkFtZTgwODk5MTgzMTE@._V1_SX300.jpg",description:"Стив обнаруживает заговор внутри Щ.И.Т.",tags:["Стив Роджерс","Зимний солдат"]},
+    {id:"gotg1",title:"Стражи Галактики",year:2014,type:"film",director:"Джеймс Ганн",duration:"121 мин",watchOrder:11,poster:"https://m.media-amazon.com/images/M/MV5BMTAwMjU5OTgxNjZeQTJeQWpwZ15BbWU4MDUxNDYxODEx._V1_SX300.jpg",description:"Питер Квилл объединяется с преступниками.",tags:["Звёздный Лорд","Гамора"]},
+    {id:"avengers2",title:"Мстители: Эра Альтрона",year:2015,type:"film",director:"Джосс Уидон",duration:"141 мин",watchOrder:13,poster:"https://m.media-amazon.com/images/M/MV5BMTM4OGJmNWMtOTM4Ni00NTE3LTg3MDItZmQxYjc4N2JhNmUxXkEyXkFqcGdeQXVyNTgzMDMzMTg@._V1_SX300.jpg",description:"Тони создаёт Альтрона.",tags:["Альтрон","Вижн"]},
+    {id:"ant1",title:"Человек-муравей",year:2015,type:"film",director:"Пейтон Рид",duration:"117 мин",watchOrder:14,poster:"https://m.media-amazon.com/images/M/MV5BMjM2NTQ5Mzc2M15BMl5BanBnXkFtZTgwNTcxMDI2NTE@._V1_SX300.jpg",description:"Скотт Лэнг получает костюм.",tags:["Скотт Лэнг","Хэнк Пим"]},
+    {id:"gotg2",title:"Стражи Галактики 2",year:2017,type:"film",director:"Джеймс Ганн",duration:"136 мин",watchOrder:12,poster:"https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg",description:"Стражи узнают тайну происхождения Питера.",tags:["Питер Квилл","Эго"]}
+  ]},
+  "phase-3":{title:"Фаза 3",items:[
+    {id:"cap3",title:"Первый мститель: Противостояние",year:2016,type:"film",director:"Братья Руссо",duration:"147 мин",watchOrder:15,poster:"https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg",description:"Мстители разделяются на две фракции.",tags:["Стив Роджерс","Тони Старк"]},
+    {id:"strange1",title:"Доктор Стрэндж",year:2016,type:"film",director:"Скотт Дерриксон",duration:"115 мин",watchOrder:19,poster:"https://m.media-amazon.com/images/M/MV5BNjgwNzAzNjk1Nl5BMl5BanBnXkFtZTgwMzQ2NjI1OTE@._V1_SX300.jpg",description:"Хирург становится Верховным Магом.",tags:["Стивен Стрэндж","Вонг"]},
+    {id:"spider1",title:"Человек-паук: Возвращение домой",year:2017,type:"film",director:"Джон Уоттс",duration:"133 мин",watchOrder:18,poster:"https://m.media-amazon.com/images/M/MV5BNTk4ODQ1MzgzNl5BMl5BanBnXkFtZTgwMTMyMzM4MTI@._V1_SX300.jpg",description:"Питер совмещает жизнь школьника и героя.",tags:["Питер Паркер","Тони Старк"]},
+    {id:"thor3",title:"Тор: Рагнарёк",year:2017,type:"film",director:"Тайка Вайтити",duration:"130 мин",watchOrder:20,poster:"https://m.media-amazon.com/images/M/MV5BMjMyNDkzMzI1OF5BMl5BanBnXkFtZTgwODcxODg5MjI@._V1_SX300.jpg",description:"Тор сражается с Халком и Хелой.",tags:["Тор","Халк","Хела"]},
+    {id:"panther1",title:"Чёрная Пантера",year:2018,type:"film",director:"Райан Куглер",duration:"134 мин",watchOrder:17,poster:"https://m.media-amazon.com/images/M/MV5BMTg1MTY2MjYzNV5BMl5BanBnXkFtZTgwMTc4NTMwNDI@._V1_SX300.jpg",description:"Т'Чалла возвращается в Ваканду.",tags:["Т'Чалла","Киллмонгер"]},
+    {id:"avengers3",title:"Мстители: Война бесконечности",year:2018,type:"film",director:"Братья Руссо",duration:"149 мин",watchOrder:21,poster:"https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg",description:"Танос собирает Камни Бесконечности.",tags:["Танос","Все герои"]},
+    {id:"ant2",title:"Человек-муравей и Оса",year:2018,type:"film",director:"Пейтон Рид",duration:"118 мин",watchOrder:22,poster:"https://m.media-amazon.com/images/M/MV5BYjcyYTk0N2YtMzc4ZC00Y2E0LWFkNDgtNjE1MzZmMGE1YjY1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg",description:"Скотт и Хоуп ищут Джанет.",tags:["Скотт Лэнг","Хоуп"]},
+    {id:"avengers4",title:"Мстители: Финал",year:2019,type:"film",director:"Братья Руссо",duration:"181 мин",watchOrder:23,poster:"https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg",description:"Финальная битва с Таносом.",tags:["Танос","Все герои"]},
+    {id:"spider2",title:"Человек-паук: Вдали от дома",year:2019,type:"film",director:"Джон Уоттс",duration:"129 мин",watchOrder:24,poster:"https://m.media-amazon.com/images/M/MV5BMGZlNTY1ZWUtYTMzNC00ZjUyLWE0MjQtMTMxN2E3ODYxMWVmXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg",description:"Питер едет в Европу.",tags:["Питер Паркер","Мистерио"]},
+    {id:"widow",title:"Чёрная Вдова",year:2021,type:"film",director:"Кейт Шортланд",duration:"134 мин",watchOrder:16,description:"Наташа возвращается к прошлому.",tags:["Наташа","Йелена"]}
+  ]},
+  "phase-4":{title:"Фаза 4",items:[
+    {id:"wandavision",title:"Ванда/Вижен",year:2021,type:"series",director:"Мэтт Шэкман",duration:"9 серий",watchOrder:26,episodes:[{number:1,title:"Снято перед живой аудиторией"},{number:2,title:"Не переключайтесь"},{number:3,title:"Сейчас на цветном"},{number:4,title:"Мы прерываем эту программу"},{number:5,title:"В особо оригинальном стиле"},{number:6,title:"Весь день 3 ноября"},{number:7,title:"Разрывая четвёртую стену"},{number:8,title:"Предыдущие серии"},{number:9,title:"Серия финалов"}],description:"Ванда и Вижен в Вествью.",tags:["Ванда","Вижен"]},
+    {id:"falcon",title:"Сокол и Зимний солдат",year:2021,type:"series",director:"Кари Скогланд",duration:"6 серий",watchOrder:27,episodes:[{number:1,title:"Новый мировой порядок"},{number:2,title:"Звёзды и полосы"},{number:3,title:"Силовой вакуум"},{number:4,title:"По всему миру"},{number:5,title:"Правда"},{number:6,title:"Один мир, один народ"}],description:"Сэм и Баки против Флаг-смэшеров.",tags:["Сэм Уилсон","Баки"]},
+    {id:"loki1",title:"Локи (сезон 1)",year:2021,type:"series",director:"Кейт Херрон",duration:"6 серий",watchOrder:25,episodes:[{number:1,title:"Славная миссия"},{number:2,title:"Вариант"},{number:3,title:"Ламентис"},{number:4,title:"Шумиха"},{number:5,title:"Путешествие в тайну"},{number:6,title:"На все времена. Всегда."}],description:"Локи попадает в TVA.",tags:["Локи","Сильвия"]},
+    {id:"whatif1",title:"Что, если...? (сезон 1)",year:2021,type:"series",director:"Брайан Andrews",duration:"9 серий",watchOrder:28,episodes:[{number:1,title:"Капитан Картер?"},{number:2,title:"Т'Чалла стал Лордом?"},{number:3,title:"Мир потерял героев?"},{number:4,title:"Стрэндж потерял сердце?"},{number:5,title:"Зомби?!"},{number:6,title:"Киллмонгер спас Тони?"},{number:7,title:"Тор единственный ребёнок?"},{number:8,title:"Ультрон победил?"},{number:9,title:"Наблюдатель нарушил клятву?"}],description:"Альтернативные версии MCU.",tags:["Наблюдатель"]},
+    {id:"hawkeye",title:"Соколиный глаз",year:2021,type:"series",director:"Рис Томас",duration:"6 серий",watchOrder:33,episodes:[{number:1,title:"Никогда не встречай своих героев"},{number:2,title:"Скройся и слушай"},{number:3,title:"Эхо"},{number:4,title:"Партнёры, верно?"},{number:5,title:"Ронин"},{number:6,title:"Рождественский сокол"}],description:"Клинт и Кейт против Кингпина.",tags:["Клинт Бартон","Кейт"]},
+    {id:"shang",title:"Шан-Чи и легенда десяти колец",year:2021,type:"film",director:"Дестин Дэниел Креттон",duration:"132 мин",watchOrder:29,description:"Шан-Чи против отца.",tags:["Шан-Чи","Вэнь У"]},
+    {id:"eternals",title:"Вечные",year:2021,type:"film",director:"Хлоя Чжао",duration:"156 мин",watchOrder:30,description:"Бессмертные защищают Землю.",tags:["Серси","Икарис"]},
+    {id:"spider3",title:"Человек-паук: Нет пути домой",year:2021,type:"film",director:"Джон Уоттс",duration:"148 мин",watchOrder:31,description:"Мультивселенная открыта.",tags:["Питер Паркер","Док Стрэндж"]},
+    {id:"moon",title:"Лунный рыцарь",year:2022,type:"series",director:"Мохамед Диаб",duration:"6 серий",watchOrder:34,episodes:[{number:1,title:"Правда бога"},{number:2,title:"Призови костюм"},{number:3,title:"Дружелюбный тип"},{number:4,title:"Гробница"},{number:5,title:"Аспект безумия"},{number:6,title:"Боги и монстры"}],description:"Марк Спектор и Хонсу.",tags:["Марк Спектор","Хонсу"]},
+    {id:"msmarvel",title:"Мисс Марвел",year:2022,type:"series",director:"Адил Эль Арби",duration:"6 серий",watchOrder:35,episodes:[{number:1,title:"Новое поколение"},{number:2,title:"Покорённый"},{number:3,title:"Освещённый"},{number:4,title:"Пограничный контроль"},{number:5,title:"Время приключений"},{number:6,title:"Никаких нормальных"}],description:"Камала Хан обретает силы.",tags:["Камала Хан"]},
+    {id:"strange2",title:"Доктор Стрэндж: В мультивселенной безумия",year:2022,type:"film",director:"Сэм Рэйми",duration:"126 мин",watchOrder:32,description:"Стрэндж против Ванды.",tags:["Стивен Стрэндж","Ванда"]},
+    {id:"thor4",title:"Тор: Любовь и гром",year:2022,type:"film",director:"Тайка Вайтити",duration:"118 мин",watchOrder:36,description:"Тор и Джейн Фостер.",tags:["Тор","Джейн Фостер"]},
+    {id:"iamgroot",title:"Я есть Грут",year:2022,type:"series",director:"—",duration:"5 серий",watchOrder:37,episodes:[{number:1,title:"Первый день Грута"},{number:2,title:"Грут в погоне за попой"},{number:3,title:"Грут и космический корабль"},{number:4,title:"Грут танцует"},{number:5,title:"Грут и магнитогор"}],description:"Короткометражки про Грута.",tags:["Грут"]},
+    {id:"werewolf",title:"Оборотень по ночам",year:2022,type:"special",director:"Майкл Джаккино",duration:"53 мин",watchOrder:38,description:"Охотники на монстров соревнуются.",tags:["Оборотень"]},
+    {id:"panther2",title:"Чёрная Пантера: Ваканда навеки",year:2022,type:"film",director:"Райан Куглер",duration:"161 мин",watchOrder:39,description:"Ваканда против Талокана.",tags:["Шури","Нэмор"]},
+    {id:"gotg-holiday",title:"Праздничный выпуск Стражей Галактики",year:2022,type:"special",director:"Джеймс Ганн",duration:"42 мин",watchOrder:40,description:"Стражи устраивают Рождество.",tags:["Звёздный Лорд","Дракс"]},
+    {id:"shehulk",title:"Женщина-Халк: Адвокат",year:2022,type:"series",director:"Катриона Маккензи",duration:"9 серий",watchOrder:41,episodes:[{number:1,title:"Обычный человек"},{number:2,title:"Суперзакон"},{number:3,title:"Необычный подозреваемый"},{number:4,title:"Это не альфа"},{number:5,title:"Средний тон фиолетового"},{number:6,title:"Просто Уолтер"},{number:7,title:"Отдых и релаксация"},{number:8,title:"Четвёртая стена"},{number:9,title:"Это кто-то стучится?"}],description:"Джен Уолтерс становится Халком.",tags:["Джен Уолтерс"]}
+  ]},
+  "phase-5":{title:"Фаза 5",items:[
+    {id:"ant3",title:"Человек-муравей и Оса: Квантомания",year:2023,type:"film",director:"Пейтон Рид",duration:"125 мин",watchOrder:42,description:"Семья против Канга.",tags:["Скотт Лэнг","Канг"]},
+    {id:"gotg3",title:"Стражи Галактики 3",year:2023,type:"film",director:"Джеймс Ганн",duration:"150 мин",watchOrder:43,description:"Стражи спасают Ракету.",tags:["Ракета","Звёздный Лорд"]},
+    {id:"loki2",title:"Локи (сезон 2)",year:2023,type:"series",director:"Джастин Бейнс",duration:"6 серий",watchOrder:46,episodes:[{number:1,title:"Воссоединение"},{number:2,title:"Разрушенный храм"},{number:3,title:"1893"},{number:4,title:"Сердце времен"},{number:5,title:"Наука/Фантастика"},{number:6,title:"Гладиус"}],description:"Локи спасает мультивселенную.",tags:["Локи","Сильвия"]},
+    {id:"secret",title:"Тайное вторжение",year:2023,type:"series",director:"Али Селим",duration:"6 серий",watchOrder:45,episodes:[{number:1},{number:2},{number:3},{number:4},{number:5},{number:6}],description:"Скруллы вторгаются.",tags:["Ник Фьюри"]},
+    {id:"iamgroot2",title:"Я есть Грут (сезон 2)",year:2023,type:"series",director:"—",duration:"5 серий",watchOrder:44,episodes:[{number:1,title:"Ты там, Грут?"},{number:2,title:"Первые шаги Грута"},{number:3,title:"Грут принимает ванну"},{number:4,title:"Сладкое угощение Грута"},{number:5,title:"Погоня Грута"}],description:"Новые приключения Грута.",tags:["Грут"]},
+    {id:"marvels",title:"Марвелы",year:2023,type:"film",director:"Ниа Дакоста",duration:"105 мин",watchOrder:48,description:"Три героини объединяются.",tags:["Капитан Марвел","Моника"]},
+    {id:"echo",title:"Эхо",year:2024,type:"series",director:"Сидни Фриланд",duration:"5 серий",watchOrder:47,episodes:[{number:1},{number:2},{number:3},{number:4},{number:5}],description:"Майя против Кингпина.",tags:["Майя Лопес"]},
+    {id:"deadpool",title:"Дэдпул и Росомаха",year:2024,type:"film",director:"Шон Леви",duration:"127 мин",watchOrder:50,description:"Дэдпул и Росомаха.",tags:["Дэдпул","Росомаха"]},
+    {id:"agatha",title:"Агата всё время",year:2024,type:"series",director:"Джеймс Поншоль",duration:"9 серий",watchOrder:49,episodes:[{number:1,title:"Видела ли ты эту ведьму?"},{number:2,title:"Дорога вперёд"},{number:3,title:"Через портал"},{number:4,title:"Если я не могу держать тебя"},{number:5,title:"Разрушение"},{number:6,title:"Пролог"},{number:7,title:"Смерть/Рождение"},{number:8,title:"Последний эпизод"},{number:9,title:"Майорский спуск"}],description:"Агата проходит Дорогу Ведьм.",tags:["Агата","Билли"]},
+    {id:"cap4",title:"Капитан Америка: Дивный новый мир",year:2025,type:"film",director:"Джулиус Она",duration:"119 мин",watchOrder:54,description:"Сэм как Капитан.",tags:["Сэм Уилсон"]},
+    {id:"thunder",title:"Громобой",year:2025,type:"film",director:"Джейк Шрейер",duration:"128 мин",watchOrder:55,description:"Команда антигероев.",tags:["Йелена","Баки"]},
+    {id:"daredevil",title:"Сорвиголова: Возрождение",year:2025,type:"series",director:"Дарио Скардарамоне",duration:"18 серий",watchOrder:51,episodes:[{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8},{number:9},{number:10},{number:11},{number:12},{number:13},{number:14},{number:15},{number:16},{number:17},{number:18}],description:"Мэтт против Фиска.",tags:["Мэтт Мёрдок","Кингпин"]},
+    {id:"ironheart",title:"Железное сердце",year:2025,type:"series",director:"Сэм Бейли",duration:"6 серий",watchOrder:52,episodes:[{number:1},{number:2},{number:3},{number:4},{number:5},{number:6}],description:"Рири создаёт броню.",tags:["Рири Уильямс"]},
+    {id:"yourfriendly",title:"Ваши дружелюбные соседи",year:2025,type:"series",director:"Мэлхиор Цуй",duration:"8 серий",watchOrder:53,episodes:[{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8}],description:"Питер и Норман.",tags:["Питер Паркер"]}
+  ]},
+  "phase-6":{title:"Фаза 6",items:[
+    {id:"fantastic",title:"Фантастическая четвёрка: Первые шаги",year:2025,type:"film",director:"Мэтт Шэкман",duration:"—",watchOrder:56,description:"Семья супергероев.",tags:["Мистер Фантастик"]},
+    {id:"zombie",title:"Marvel Zombies",year:2025,type:"series",director:"Брайан Andrews",duration:"4 серии",watchOrder:58,episodes:[{number:1},{number:2},{number:3},{number:4}],description:"Зомби-апокалипсис.",tags:["Зомби"]},
+    {id:"avengers5",title:"Мстители: Судный день",year:2026,type:"film",director:"Братья Руссо",duration:"—",watchOrder:59,description:"Против Доктора Дума.",tags:["Доктор Дум"]},
+    {id:"vision",title:"Вижн",year:2026,type:"series",director:"Джейк Шрейер",duration:"—",watchOrder:57,episodes:[{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8}],description:"Белый Вижн ищет себя.",tags:["Вижен"]},
+    {id:"avengers6",title:"Мстители: Секретные войны",year:2027,type:"film",director:"Братья Руссо",duration:"—",watchOrder:60,description:"Финальная битва.",tags:["Финал"]}
+  ]}
+};
+
+function loadWatched(){const raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");watched=raw.watched||{};watchedEpisodes=raw.episodes||{}}
+function saveWatched(){localStorage.setItem(STORAGE_KEY,JSON.stringify({watched,episodes:watchedEpisodes}))}
+loadWatched();
+
+function navigate(page){window.location.hash=page==="home"?"":page}
+function applyRoute(){
+  const hash=window.location.hash.replace("#","")||"home";
+  const validPages=["home","checklist","profile"];
+  const page=validPages.includes(hash)?hash:"home";
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+page).classList.add("active");
+  document.querySelectorAll(".nav-link").forEach(l=>l.classList.toggle("active",l.dataset.page===page));
+  if(page==="checklist")renderChecklist();
+  if(page==="profile")renderProfile();
+  if(page==="home")renderHomeStats();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",applyRoute);
+
+function renderHomeStats(){
+  let total=0,films=0,series=0;
+  for(const k in mcuData){mcuData[k].items.forEach(i=>{total++;if(i.type==="film")films++;else series++;})}
+  document.getElementById("statTotal").textContent=total;
+  document.getElementById("statFilms").textContent=films;
+  document.getElementById("statSeries").textContent=series;
+}
+
+function renderPoster(item){
+  const localPath=`posters/${item.id}.jpg`,localPathPng=`posters/${item.id}.png`,externalUrl=item.poster||null;
+  if(externalUrl)return `<div class="poster-box"><img src="${externalUrl}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='${localPath}';this.addEventListener('error',function(){this.parentElement.innerHTML='<div class=\\'poster-placeholder\\'><div class=\\'poster-icon\\'>🎬</div><div class=\\'poster-text\\'>Постер не загружен<br><br>${item.title}<br>${item.year}</div></div>';})"></div>`;
+  return `<div class="poster-box"><img src="${localPath}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='${localPathPng}';this.addEventListener('error',function(){this.parentElement.innerHTML='<div class=\\'poster-placeholder\\'><div class=\\'poster-icon\\'></div><div class=\\'poster-text\\'>Постер будет добавлен<br><br>${item.title}<br>${item.year}</div></div>';})"></div>`;
+}
+
+function isFutureRelease(year){return year>CURRENT_YEAR}
+function getReleaseStatus(year){if(isFutureRelease(year))return `<div class="release-status">⏳ Ещё не вышел · ${year}</div>`;return ''}
+function getTypeLabel(type){if(type==='film')return'Фильм';if(type==='series')return'Сериал';return'Спецвыпуск'}
+function getTypeClass(type){if(type==='film')return'type-film';if(type==='series')return'type-series';return'type-special'}
+
+function renderEpisodes(seriesId,episodes){
+  if(!episodes||episodes.length===0)return '';
+  const seriesWatched=watchedEpisodes[seriesId]||{};
+  const watchedCount=Object.keys(seriesWatched).filter(k=>seriesWatched[k]).length;
+  let html=`<div class="episodes-section"><div class="episodes-title">Серии (${watchedCount}/${episodes.length})</div>`;
+  episodes.forEach(ep=>{
+    const epKey=`${seriesId}_ep${ep.number}`,isWatched=seriesWatched[epKey]||false,title=ep.title||`Серия ${ep.number}`;
+    html+=`<div class="episode-item ${isWatched?'watched':''}" onclick="toggleEpisode('${seriesId}',${ep.number})"><div class="episode-checkbox"></div><div class="episode-info"><div class="episode-number">Серия ${ep.number}</div><div class="episode-title">${title}</div></div></div>`;
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderChecklist(){
+  const main=document.getElementById("mainContent");
+  main.innerHTML="";
+  let anyVisible=false;
+  for(const phaseKey in mcuData){
+    const phase=mcuData[phaseKey];
+    const section=document.createElement("section");
+    section.className="phase-section";
+    section.dataset.phase=phaseKey;
+    if(currentFilter.startsWith("phase-")&&currentFilter!==phaseKey)section.style.display="none";
+    const title=document.createElement("h2");
+    title.className="phase-title";
+    const phaseWatched=phase.items.filter(i=>watched[i.id]).length;
+    title.innerHTML=`<span class="phase-badge">${phase.title}</span><span>Киновселенная Marvel</span><span class="phase-progress">${phaseWatched}/${phase.items.length}</span>`;
+    section.appendChild(title);
+    const grid=document.createElement("div");
+    grid.className="items-grid";
+    let items=[...phase.items].sort((a,b)=>a.year-b.year);
+    items.forEach(item=>{
+      if((currentFilter==="film"||currentFilter==="series"||currentFilter==="special")&&item.type!==currentFilter)return;
+      if(currentSearch&&!item.title.toLowerCase().includes(currentSearch))return;
+      anyVisible=true;
+      const card=document.createElement("div");
+      const isExpanded=expandedId===item.id;
+      card.className="item-card"+(watched[item.id]?" done":"")+(isExpanded?" expanded":"");
+      card.dataset.id=item.id;
+      const releaseStatus=getReleaseStatus(item.year);
+      card.innerHTML=`<div class="item-header"><div class="checkbox" data-action="toggle-watch"></div><div class="item-info"><div class="item-title">${item.title}</div><div class="item-meta"><span class="item-type ${getTypeClass(item.type)}">${getTypeLabel(item.type)}</span><span>${item.year}</span></div>${releaseStatus}</div><div class="expand-indicator">▼</div></div><div class="item-details"><div class="item-details-inner">${renderPoster(item)}<div class="info-block"><div class="info-title">${item.title}</div><div class="info-meta"><div class="info-meta-item">📅<strong>${item.year}</strong></div><div class="info-meta-item">🎬<strong>${item.director||'—'}</strong></div><div class="info-meta-item">⏱<strong>${item.duration||'—'}</strong></div><div class="info-meta-item">📂<strong>${phase.title}</strong></div></div><div class="info-description">${item.description}</div><div class="info-tags">${(item.tags||[]).map(t=>`<span class="info-tag">#${t}</span>`).join('')}</div>${item.type==='series'&&item.episodes?renderEpisodes(item.id,item.episodes):''}</div></div></div>`;
+      const checkbox=card.querySelector('.checkbox');
+      checkbox.addEventListener('click',(e)=>{e.stopPropagation();toggleWatched(item.id)});
+      card.addEventListener('click',(e)=>{if(!e.target.closest('.episode-item'))toggleExpand(item.id)});
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    main.appendChild(section);
+  }
+  if(!anyVisible)main.innerHTML='<div class="no-results">🎬 Ничего не найдено. Попробуйте изменить запрос.</div>';
+  updateProgress();
+}
+
+function toggleExpand(id){expandedId=expandedId===id?null:id;renderChecklist();if(expandedId)setTimeout(()=>{const card=document.querySelector(`.item-card[data-id="${expandedId}"]`);if(card)card.scrollIntoView({behavior:'smooth',block:'nearest'})},100)}
+function toggleWatched(id){if(watched[id])delete watched[id];else watched[id]=Date.now();saveWatched();renderChecklist()}
+function toggleEpisode(seriesId,episodeNumber){const epKey=`${seriesId}_ep${episodeNumber}`;if(!watchedEpisodes[seriesId])watchedEpisodes[seriesId]={};if(watchedEpisodes[seriesId][epKey])delete watchedEpisodes[seriesId][epKey];else watchedEpisodes[seriesId][epKey]=Date.now();saveWatched();renderChecklist()}
+
+function updateProgress(){
+  let total=0,done=0;
+  const watchedList=[];
+  for(const phaseKey in mcuData){
+    mcuData[phaseKey].items.forEach(item=>{
+      if((currentFilter==="film"||currentFilter==="series"||currentFilter==="special")&&item.type!==currentFilter)return;
+      if(currentFilter.startsWith("phase-")&&currentFilter!==phaseKey)return;
+      if(currentSearch&&!item.title.toLowerCase().includes(currentSearch))return;
+      total++;
+      if(watched[item.id]){done++;watchedList.push({...item,timestamp:watched[item.id]})}
+    })
+  }
+  const percent=total>0?Math.round((done/total)*100):0;
+  document.getElementById("progressPercent").textContent=percent+"%";
+  document.getElementById("progressCount").textContent=`${done}/${total}`;
+  const fill=document.getElementById("progressFill");
+  fill.innerHTML="";
+  fill.style.height=percent+"%";
+  if(done>0){
+    watchedList.sort((a,b)=>a.timestamp-b.timestamp);
+    const segmentHeight=100/done;
+    watchedList.forEach(item=>{
+      const segment=document.createElement("div");
+      segment.className="progress-segment";
+      segment.style.height=segmentHeight+"%";
+      if(item.type==="film")segment.style.background="var(--film-color)";
+      else if(item.type==="series")segment.style.background="var(--series-color)";
+      else segment.style.background="var(--special-color)";
+      segment.title=item.title;
+      fill.appendChild(segment);
+    })
+  }
+}
+
+document.getElementById("filters").addEventListener("click",e=>{
+  if(e.target.classList.contains("filter-btn")){
+    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+    e.target.classList.add("active");
+    currentFilter=e.target.dataset.filter;
+    expandedId=null;
+    renderChecklist();
+  }
+});
+document.getElementById("searchInput").addEventListener("input",e=>{currentSearch=e.target.value.trim().toLowerCase();expandedId=null;renderChecklist()});
+
+function getAllItems(){const all=[];for(const k in mcuData)mcuData[k].items.forEach(i=>all.push({...i,phase:k}));return all}
+function formatDate(ts){
+  const d=new Date(ts);
+  const months=["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"];
+  const now=new Date();
+  const diff=Math.floor((now-d)/(1000*60*60*24));
+  if(diff===0)return"Сегодня";
+  if(diff===1)return"Вчера";
+  if(diff<7)return`${diff} дн. назад`;
+  return`${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+function renderProfile(){
+  const all=getAllItems();
+  const total=all.length;
+  const watchedItems=all.filter(i=>watched[i.id]);
+  const done=watchedItems.length;
+  const percent=total>0?Math.round((done/total)*100):0;
+  const circumference=2*Math.PI*88;
+  const offset=circumference-(percent/100)*circumference;
+  document.getElementById("circleFg").setAttribute("stroke-dashoffset",offset);
+  document.getElementById("circlePercent").textContent=percent+"%";
+  document.getElementById("profileCount").textContent=`${done} из ${total}`;
+  const phaseStats=document.getElementById("phaseStats");
+  phaseStats.innerHTML="";
+  for(const k in mcuData){
+    const phase=mcuData[k];
+    const pTotal=phase.items.length;
+    const pDone=phase.items.filter(i=>watched[i.id]).length;
+    const pPercent=pTotal>0?Math.round((pDone/pTotal)*100):0;
+    const row=document.createElement("div");
+    row.className="phase-stat";
+    row.innerHTML=`<div class="phase-stat-head"><span class="phase-stat-name">${phase.title}</span><span class="phase-stat-num">${pDone}/${pTotal}·${pPercent}%</span></div><div class="phase-stat-bar"><div class="phase-stat-fill" style="width:0%"></div></div>`;
+    phaseStats.appendChild(row);
+    requestAnimationFrame(()=>{row.querySelector(".phase-stat-fill").style.width=pPercent+"%"})
+  }
+  const recentList=document.getElementById("recentList");
+  recentList.innerHTML="";
+  if(watchedItems.length===0){
+    recentList.innerHTML=`<div class="recent-empty"><div class="recent-empty-icon">🎬</div><div>Вы ещё не отметили ни одного проекта</div><div style="font-size:13px;margin-top:6px;">Перейдите в чек-лист и начните просмотр!</div></div>`;
+    return;
+  }
+  const sorted=[...watchedItems].sort((a,b)=>watched[b.id]-watched[a.id]).slice(0,10);
+  sorted.forEach((item,idx)=>{
+    const el=document.createElement("div");
+    el.className="recent-item";
+    el.innerHTML=`<div class="recent-num">${idx+1}</div><div class="recent-info"><div class="recent-name">${item.title}</div><div class="recent-meta"><span class="item-type ${getTypeClass(item.type)}" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;">${getTypeLabel(item.type)}</span><span>${item.year}</span><span>·${mcuData[item.phase].title}</span></div></div><div class="recent-date">${formatDate(watched[item.id])}</div>`;
+    recentList.appendChild(el);
+  })
+}
+
+applyRoute();
+</script>
+</body>
+</html>
