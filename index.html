@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MCU Чек-лист — Киновселенная Marvel</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#0d0d12;--bg-2:#15151d;--bg-3:#1e1e2a;--accent:#e23636;--accent-2:#ff4757;--text:#e8e8ee;--muted:#8a8a99;--border:#2a2a38;--done:#2ecc71;--film-color:#3498db;--series-color:#9b59b6;--warning:#f39c12}
+*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#0d0d12;--bg-2:#15151d;--bg-3:#1e1e2a;--accent:#e23636;--accent-2:#ff4757;--text:#e8e8ee;--muted:#8a8a99;--border:#2a2a38;--done:#2ecc71;--film-color:#3498db;--series-color:#9b59b6;--special-color:#f39c12;--warning:#f39c12;--upcoming:#9b59b6}
 body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 .top-nav{background:linear-gradient(90deg,#0d0d12 0%,#1a0a0a 100%);border-bottom:2px solid var(--accent);padding:12px 25px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(226,54,54,0.15)}
 .nav-logo{font-size:20px;font-weight:900;letter-spacing:2px;color:var(--accent);text-shadow:0 0 10px rgba(226,54,54,0.5);cursor:pointer;white-space:nowrap}
 .nav-logo span{color:var(--text)}
-.nav-links{display:flex;gap:8px;margin-left:auto}
+.nav-links{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
 .nav-link{padding:8px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;text-decoration:none}
 .nav-link:hover{border-color:var(--accent)}
 .nav-link.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 15px rgba(226,54,54,0.4)}
@@ -61,73 +61,78 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
 .legend-dot{width:8px;height:8px;border-radius:50%}
 .checklist-main{flex:1;padding:30px 40px;overflow-x:hidden}
 .phase-section{margin-bottom:40px}
-.phase-title{font-size:26px;font-weight:900;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:12px}
+.phase-title{font-size:26px;font-weight:900;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .phase-badge{background:var(--accent);color:#fff;padding:4px 12px;border-radius:6px;font-size:14px}
 .phase-progress{margin-left:auto;font-size:14px;color:var(--muted);font-weight:400}
-.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}
-.item-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;transition:all .35s cubic-bezier(0.4,0,0.2,1);cursor:pointer;position:relative;overflow:hidden}
-.item-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--border);transition:background .3s}
-.item-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.4)}
+.phase-checkbox{width:28px;height:28px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--bg-3);cursor:pointer}
+.phase-checkbox:hover{border-color:var(--done);transform:scale(1.1)}
+.phase-checkbox.checked{background:var(--done);border-color:var(--done);box-shadow:0 0 10px rgba(46,204,113,0.5)}
+.phase-checkbox::after{content:"✓";color:#fff;font-weight:900;font-size:16px;opacity:0;transform:scale(0);transition:all .2s}
+.phase-checkbox.checked::after{opacity:1;transform:scale(1)}
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:15px}
+.item-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;transition:all .4s cubic-bezier(0.4,0,0.2,1);cursor:pointer;position:relative;overflow:hidden}
+.item-card:hover{border-color:var(--accent);box-shadow:0 8px 20px rgba(0,0,0,0.4)}
 .item-card.done{background:linear-gradient(90deg,rgba(46,204,113,0.08) 0%,var(--bg-2) 100%)}
-.item-card.done::before{background:var(--done)}
-.item-card.expanded{grid-column:1/-1;border-color:var(--accent);box-shadow:0 10px 30px rgba(226,54,54,0.2);transform:none}
-.item-card.expanded:hover{transform:none}
-.item-header{padding:16px;display:flex;align-items:center;gap:12px}
-.checkbox{width:26px;height:26px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--bg-3);cursor:pointer;z-index:2}
+.item-card.done .card-poster{border:2px solid var(--done)}
+.card-inner{display:flex;flex-direction:row;align-items:flex-start}
+.card-poster{width:80px;height:120px;flex-shrink:0;border-radius:8px;overflow:hidden;margin:16px;transition:all .4s cubic-bezier(0.4,0,0.2,1);background:var(--bg-3)}
+.card-poster img{width:100%;height:100%;object-fit:cover;display:block;transition:all .4s ease}
+.poster-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:5px}
+.poster-placeholder .poster-icon{font-size:24px;margin-bottom:4px}
+.poster-placeholder .poster-text{font-size:9px;line-height:1.2}
+.card-content{flex:1;display:flex;flex-direction:column;padding:16px 16px 16px 0;min-width:0}
+.card-header-row{display:flex;align-items:flex-start;gap:12px}
+.checkbox{width:26px;height:26px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--bg-3);cursor:pointer;z-index:2;margin-top:2px}
 .checkbox:hover{border-color:var(--done);transform:scale(1.1)}
 .item-card.done .checkbox{background:var(--done);border-color:var(--done);box-shadow:0 0 10px rgba(46,204,113,0.5)}
 .checkbox::after{content:"✓";color:#fff;font-weight:900;font-size:16px;opacity:0;transform:scale(0);transition:all .2s}
 .item-card.done .checkbox::after{opacity:1;transform:scale(1)}
 .item-info{flex:1;min-width:0}
-.item-title{font-size:15px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-title{font-size:15px;font-weight:600;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item-card.done .item-title{text-decoration:line-through;opacity:0.6}
-.item-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:center}
+.item-meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .item-type{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase}
 .type-film{background:var(--film-color);color:#fff}
 .type-series{background:var(--series-color);color:#fff}
-.type-special{background:#f39c12;color:#fff}
-.expand-indicator{color:var(--muted);font-size:18px;transition:transform .3s;flex-shrink:0}
+.type-special{background:var(--special-color);color:#fff}
+.short-desc{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis}
+.expand-indicator{color:var(--muted);font-size:18px;transition:transform .4s;flex-shrink:0;margin-top:2px}
 .item-card.expanded .expand-indicator{transform:rotate(180deg);color:var(--accent)}
-.item-details{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
-.item-card.expanded .item-details{max-height:2000px}
-.item-details-inner{padding:20px 16px;display:grid;grid-template-columns:200px 1fr;gap:25px;border-top:1px solid var(--border)}
-.poster-box{width:200px;height:300px;border-radius:10px;overflow:hidden;position:relative;flex-shrink:0;box-shadow:0 8px 25px rgba(0,0,0,0.5);transition:transform .3s}
-.poster-box:hover{transform:scale(1.02)}
-.poster-box img{width:100%;height:100%;object-fit:cover;display:block}
-.poster-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--bg-3) 0%,var(--bg) 100%);border:2px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:10px}
-.poster-icon{font-size:40px;margin-bottom:8px;opacity:0.5}
-.poster-text{opacity:0.7;font-size:11px;line-height:1.4}
-.info-block{display:flex;flex-direction:column;gap:12px}
-.info-title{font-size:22px;font-weight:800;color:var(--text);line-height:1.2}
+.item-details{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(0.4,0,0.2,1),opacity .3s;opacity:0;margin-top:0}
+.item-card.expanded{grid-column:1/-1;border-color:var(--accent);box-shadow:0 10px 30px rgba(226,54,54,0.2)}
+.item-card.expanded .card-poster{width:200px;height:300px;margin:20px;border-radius:10px}
+.item-card.expanded .item-details{max-height:1500px;opacity:1;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.info-block{display:flex;flex-direction:column;gap:12px;padding-right:20px}
 .info-meta{display:flex;gap:15px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .info-meta-item{display:flex;align-items:center;gap:6px}
 .info-meta-item strong{color:var(--text);font-weight:600}
-.info-description{font-size:14px;line-height:1.6;color:#c8c8d2;margin-top:4px}
-.info-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.info-description{font-size:15px;line-height:1.7;color:var(--text);margin-top:8px}
+.info-tags{display:flex;gap:8px;flex-wrap:wrap}
 .info-tag{padding:4px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:12px;font-size:11px;color:var(--muted)}
-.release-status{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(243,156,18,0.15);border:1px solid var(--warning);border-radius:8px;color:var(--warning);font-size:12px;font-weight:600;margin-top:8px}
-.episodes-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
-.episodes-title{font-size:16px;font-weight:700;margin-bottom:15px;color:var(--text);display:flex;align-items:center;gap:8px}
+.release-status{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(243,156,18,0.15);border:1px solid var(--warning);border-radius:8px;color:var(--warning);font-size:11px;font-weight:600;margin-top:8px}
+.episodes-section{margin-top:15px;padding-top:15px;border-top:1px dashed var(--border)}
+.episodes-title{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
 .episodes-title::before{content:"📺"}
-.episode-item{display:flex;align-items:center;gap:12px;padding:12px 15px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.episode-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all .2s}
 .episode-item:hover{border-color:var(--accent);background:var(--bg-2)}
 .episode-item.watched{background:rgba(46,204,113,0.08);border-color:var(--done)}
-.episode-checkbox{width:22px;height:22px;border:2px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--bg-2)}
+.episode-checkbox{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--bg-2)}
 .episode-item.watched .episode-checkbox{background:var(--done);border-color:var(--done)}
-.episode-checkbox::after{content:"✓";color:#fff;font-weight:900;font-size:14px;opacity:0;transform:scale(0);transition:all .2s}
+.episode-checkbox::after{content:"✓";color:#fff;font-weight:900;font-size:12px;opacity:0;transform:scale(0);transition:all .2s}
 .episode-item.watched .episode-checkbox::after{opacity:1;transform:scale(1)}
 .episode-info{flex:1;min-width:0}
-.episode-number{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:2px}
-.episode-title{font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.episode-number{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:2px}
+.episode-title{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .episode-item.watched .episode-title{text-decoration:line-through;opacity:0.6}
 .no-results{text-align:center;padding:60px 20px;color:var(--muted);font-size:18px}
-.profile-page{flex:1;padding:40px 6%;overflow-y:auto}
-.profile-header{margin-bottom:40px}
-.profile-greeting{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
-.profile-title{font-size:clamp(32px,5vw,48px);font-weight:900;margin-bottom:8px}
+.profile-page,.upcoming-page{flex:1;padding:40px 6%;overflow-y:auto}
+.profile-header,.upcoming-header{margin-bottom:40px}
+.profile-greeting,.upcoming-greeting{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.profile-title,.upcoming-title{font-size:clamp(32px,5vw,48px);font-weight:900;margin-bottom:8px}
 .profile-title .red{color:var(--accent)}
-.profile-sub{color:var(--muted);font-size:16px}
-.profile-grid{display:grid;grid-template-columns:320px 1fr;gap:30px;margin-bottom:40px}
+.upcoming-title .purple{color:var(--upcoming)}
+.profile-sub,.upcoming-sub{color:var(--muted);font-size:16px}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:40px}
 @media(max-width:900px){.profile-grid{grid-template-columns:1fr}}
 .circle-card{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .circle-progress{position:relative;width:200px;height:200px;margin-bottom:20px}
@@ -135,20 +140,24 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
 .circle-progress circle{fill:none;stroke-width:12;stroke-linecap:round}
 .circle-bg{stroke:var(--bg-3)}
 .circle-fg{stroke:url(#gradient);transition:stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1);filter:drop-shadow(0 0 8px rgba(226,54,54,0.6))}
+.circle-fg-other{stroke:url(#gradientOther);transition:stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1);filter:drop-shadow(0 0 8px rgba(52,152,219,0.6))}
 .circle-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
 .circle-percent{font-size:48px;font-weight:900;color:var(--accent);line-height:1;text-shadow:0 0 20px rgba(226,54,54,0.4)}
+.circle-percent-other{font-size:48px;font-weight:900;color:var(--film-color);line-height:1;text-shadow:0 0 20px rgba(52,152,219,0.4)}
 .circle-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:6px}
 .circle-count{font-size:16px;color:var(--text);margin-top:10px}
 .circle-count strong{color:var(--done)}
-.stats-card{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px}
+.stats-card{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px;margin-top:30px}
 .stats-title{font-size:18px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .stats-title::before{content:"";width:4px;height:20px;background:var(--accent);border-radius:2px}
+.stats-title.other-title::before{background:var(--film-color)}
 .phase-stat{margin-bottom:18px}.phase-stat:last-child{margin-bottom:0}
 .phase-stat-head{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px}
 .phase-stat-name{font-weight:600}.phase-stat-num{color:var(--muted);font-size:13px}
 .phase-stat-bar{height:8px;background:var(--bg-3);border-radius:4px;overflow:hidden}
 .phase-stat-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:4px;transition:width .8s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 8px rgba(226,54,54,0.4)}
-.recent-section{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px}
+.phase-stat-fill.other-fill{background:linear-gradient(90deg,var(--film-color),#1abc9c);box-shadow:0 0 8px rgba(52,152,219,0.4)}
+.recent-section{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:30px;margin-top:30px}
 .recent-title{font-size:18px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .recent-title::before{content:"";width:4px;height:20px;background:var(--done);border-radius:2px}
 .recent-list{display:flex;flex-direction:column;gap:10px}
@@ -167,7 +176,18 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
 .btn-primary:hover{background:var(--accent-2);box-shadow:0 0 20px rgba(226,54,54,0.5);transform:translateY(-2px)}
 .btn-secondary{background:var(--bg-3);color:var(--text);border-color:var(--border)}
 .btn-secondary:hover{border-color:var(--accent);background:var(--bg-2)}
-@media(max-width:768px){.top-nav{padding:10px 15px}.nav-logo{font-size:16px}.nav-link{padding:6px 12px;font-size:12px}.home-hero{padding:40px 5%}.checklist-header{padding:15px 15px 15px 85px}.checklist-layout{padding-left:70px}.progress-sidebar{width:70px;padding:15px 5px}.progress-percent{font-size:18px}.progress-legend{display:none}.checklist-main{padding:20px 15px}.items-grid{grid-template-columns:1fr}.phase-title{font-size:20px}.profile-page{padding:25px 15px}.item-details-inner{grid-template-columns:1fr}.poster-box{width:100%;height:280px;margin:0 auto}}
+.upcoming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;margin-top:30px}
+.upcoming-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .3s}
+.upcoming-card:hover{border-color:var(--upcoming);transform:translateY(-4px);box-shadow:0 8px 20px rgba(155,89,182,0.2)}
+.upcoming-poster{width:100%;height:400px;background:var(--bg-3)}
+.upcoming-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.upcoming-content{padding:20px}
+.upcoming-year{display:inline-block;padding:4px 12px;background:var(--upcoming);color:#fff;border-radius:12px;font-size:12px;font-weight:700;margin-bottom:10px}
+.upcoming-year.unknown{background:var(--warning)}
+.upcoming-card-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.upcoming-card-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:15px}
+.upcoming-card-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+@media(max-width:768px){.top-nav{padding:10px 15px}.nav-logo{font-size:16px}.nav-link{padding:6px 12px;font-size:12px}.home-hero{padding:40px 5%}.checklist-header{padding:15px 15px 15px 85px}.checklist-layout{padding-left:70px}.progress-sidebar{width:70px;padding:15px 5px}.progress-percent{font-size:18px}.progress-legend{display:none}.checklist-main{padding:20px 15px}.items-grid{grid-template-columns:1fr}.phase-title{font-size:20px}.profile-page,.upcoming-page{padding:25px 15px}.item-card.expanded .card-inner{flex-direction:column}.item-card.expanded .card-poster{width:100%;max-width:250px;height:auto;aspect-ratio:2/3;margin:16px auto}.item-card.expanded .card-content{padding:0 16px 16px}.item-card.expanded .item-details{margin-top:10px;padding-top:10px}.upcoming-grid{grid-template-columns:1fr}}
 ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg-3);border-radius:5px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 </style>
 </head>
@@ -177,7 +197,9 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
   <div class="nav-logo" onclick="navigate('home')">MARVEL<span>·MCU</span></div>
   <div class="nav-links">
     <a class="nav-link" data-page="home" onclick="navigate('home')">🏠 Главная</a>
-    <a class="nav-link" data-page="checklist" onclick="navigate('checklist')">✅ Чек-лист</a>
+    <a class="nav-link" data-page="mcu" onclick="navigate('mcu')">✅ Чек-лист MCU</a>
+    <a class="nav-link" data-page="other" onclick="navigate('other')">🎬 Другие Marvel</a>
+    <a class="nav-link" data-page="upcoming" onclick="navigate('upcoming')">📅 Скоро выйдут</a>
     <a class="nav-link" data-page="profile" onclick="navigate('profile')">👤 Мой прогресс</a>
   </div>
 </nav>
@@ -188,28 +210,28 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
       <div class="home-badge">★ Киновселенная Marvel</div>
       <h1 class="home-title"><span class="red">MARVEL</span>·MCU</h1>
       <p class="home-subtitle">Твой личный чек-лист киновселенной</p>
-      <p class="home-description">Отслеживай все <strong>фильмы</strong> и <strong>сериалы</strong> Киновселенной Marvel в одном месте. Отмечай просмотренное, смотри свой прогресс в реальном времени и никогда не теряйся в хронологии фаз.</p>
+      <p class="home-description">Отслеживай все <strong>фильмы</strong>, <strong>сериалы</strong> и <strong>спецвыпуски</strong> Киновселенной Marvel в одном месте.</p>
       <div class="home-buttons">
-        <a class="home-btn" onclick="navigate('checklist')"><span class="home-btn-icon">✅</span><div class="home-btn-title">Чек-лист</div><div class="home-btn-desc">Перейти к списку всех фильмов и сериалов по фазам.</div><span class="home-btn-arrow">→</span></a>
-        <a class="home-btn" onclick="navigate('profile')"><span class="home-btn-icon">👤</span><div class="home-btn-title">Мой прогресс</div><div class="home-btn-desc">Посмотри свой общий процент, статистику по фазам.</div><span class="home-btn-arrow">→</span></a>
+        <a class="home-btn" onclick="navigate('mcu')"><span class="home-btn-icon">✅</span><div class="home-btn-title">Чек-лист MCU</div><div class="home-btn-desc">Фильмы, сериалы и спецвыпуски MCU.</div><span class="home-btn-arrow">→</span></a>
+        <a class="home-btn" onclick="navigate('upcoming')"><span class="home-btn-icon">📅</span><div class="home-btn-title">Скоро выйдут</div><div class="home-btn-desc">Анонсированные фильмы и сериалы.</div><span class="home-btn-arrow">→</span></a>
       </div>
       <div class="home-stats">
         <div><div class="home-stat-num" id="statTotal">0</div><div class="home-stat-label">Всего проектов</div></div>
         <div><div class="home-stat-num" id="statFilms">0</div><div class="home-stat-label">Фильмов</div></div>
         <div><div class="home-stat-num" id="statSeries">0</div><div class="home-stat-label">Сериалов</div></div>
-        <div><div class="home-stat-num" id="statPhases">6</div><div class="home-stat-label">Фаз</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="page" id="page-checklist">
+<section class="page" id="page-mcu">
   <div class="checklist-header">
     <div class="search-box"><input type="text" id="searchInput" placeholder="Поиск фильма или сериала..."></div>
     <div class="filters" id="filters">
       <button class="filter-btn active" data-filter="all">Все</button>
       <button class="filter-btn" data-filter="film">🎬 Фильмы</button>
       <button class="filter-btn" data-filter="series">📺 Сериалы</button>
+      <button class="filter-btn" data-filter="special">🎃 Спецвыпуски</button>
       <button class="filter-btn" data-filter="phase-1">Фаза 1</button>
       <button class="filter-btn" data-filter="phase-2">Фаза 2</button>
       <button class="filter-btn" data-filter="phase-3">Фаза 3</button>
@@ -227,9 +249,50 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
       <div class="progress-legend">
         <div class="legend-item"><div class="legend-dot" style="background:var(--film-color)"></div><span>Фильмы</span></div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--series-color)"></div><span>Сериалы</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--special-color)"></div><span>Спец</span></div>
       </div>
     </aside>
     <main class="checklist-main" id="mainContent"></main>
+  </div>
+</section>
+
+<section class="page" id="page-other">
+  <div class="checklist-header">
+    <div class="search-box"><input type="text" id="searchInputOther" placeholder="Поиск фильма..."></div>
+    <div class="filters" id="filtersOther">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="spider">🕷️ Человек-паук</button>
+      <button class="filter-btn" data-filter="xmen">👁️ Люди Икс</button>
+      <button class="filter-btn" data-filter="deadpool">️ Дэдпул</button>
+      <button class="filter-btn" data-filter="fantastic">4️⃣ Фантастическая четвёрка</button>
+      <button class="filter-btn" data-filter="venom">🕷️ Веном</button>
+      <button class="filter-btn" data-filter="blade">🗡️ Блейд</button>
+      <button class="filter-btn" data-filter="ghost">🔥 Призрачный гонщик</button>
+      <button class="filter-btn" data-filter="other"> Другие</button>
+    </div>
+  </div>
+  <div class="checklist-layout">
+    <aside class="progress-sidebar">
+      <div class="progress-label">Прогресс</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFillOther" style="height:0%"></div></div>
+      <div class="progress-percent" id="progressPercentOther">0%</div>
+      <div class="progress-count" id="progressCountOther">0 / 0</div>
+      <div class="progress-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--film-color)"></div><span>Фильмы</span></div>
+      </div>
+    </aside>
+    <main class="checklist-main" id="mainContentOther"></main>
+  </div>
+</section>
+
+<section class="page" id="page-upcoming">
+  <div class="upcoming-page">
+    <div class="upcoming-header">
+      <div class="upcoming-greeting">Анонсы</div>
+      <h1 class="upcoming-title">Скоро <span class="purple">выйдут</span></h1>
+      <p class="upcoming-sub">Фильмы и сериалы, которые находятся в разработке или анонсированы</p>
+    </div>
+    <div class="upcoming-grid" id="upcomingGrid"></div>
   </div>
 </section>
 
@@ -238,7 +301,7 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
     <div class="profile-header">
       <div class="profile-greeting">Личный кабинет</div>
       <h1 class="profile-title">Мой <span class="red">прогресс</span></h1>
-      <p class="profile-sub">Статистика просмотра Киновселенной Marvel</p>
+      <p class="profile-sub">Статистика просмотра всех проектов Marvel</p>
     </div>
     <div class="profile-grid">
       <div class="circle-card">
@@ -246,284 +309,531 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
           <svg viewBox="0 0 200 200"><defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e23636"/><stop offset="100%" stop-color="#ff4757"/></linearGradient></defs>
           <circle class="circle-bg" cx="100" cy="100" r="88"/><circle class="circle-fg" id="circleFg" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="553"/>
           </svg>
-          <div class="circle-text"><div class="circle-percent" id="circlePercent">0%</div><div class="circle-label">Пройдено</div></div>
+          <div class="circle-text"><div class="circle-percent" id="circlePercent">0%</div><div class="circle-label">MCU</div></div>
         </div>
         <div class="circle-count">Просмотрено: <strong id="profileCount">0 из 0</strong></div>
       </div>
-      <div class="stats-card"><div class="stats-title">Статистика по фазам</div><div id="phaseStats"></div></div>
+      <div class="circle-card">
+        <div class="circle-progress">
+          <svg viewBox="0 0 200 200"><defs><linearGradient id="gradientOther" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3498db"/><stop offset="100%" stop-color="#1abc9c"/></linearGradient></defs>
+          <circle class="circle-bg" cx="100" cy="100" r="88"/><circle class="circle-fg-other" id="circleFgOther" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="553"/>
+          </svg>
+          <div class="circle-text"><div class="circle-percent-other" id="circlePercentOther">0%</div><div class="circle-label">Другие Marvel</div></div>
+        </div>
+        <div class="circle-count">Просмотрено: <strong id="profileCountOther">0 из 0</strong></div>
+      </div>
     </div>
-    <div class="recent-section"><div class="recent-title">Последние просмотренные</div><div class="recent-list" id="recentList"></div></div>
+    <div class="stats-card">
+      <div class="stats-title">Статистика по фазам MCU</div>
+      <div id="phaseStats"></div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-title other-title">Статистика по категориям</div>
+      <div id="categoryStats"></div>
+    </div>
+    <div class="recent-section">
+      <div class="recent-title">Последние просмотренные</div>
+      <div class="recent-list" id="recentList"></div>
+    </div>
     <div class="profile-actions">
-      <a class="btn-primary" onclick="navigate('checklist')">✅ Перейти к чек-листу</a>
+      <a class="btn-primary" onclick="navigate('mcu')">✅ Чек-лист MCU</a>
+      <a class="btn-secondary" onclick="navigate('other')">🎬 Другие Marvel</a>
       <a class="btn-secondary" onclick="navigate('home')">🏠 На главную</a>
     </div>
   </div>
 </section>
 
 <script>
-const CURRENT_YEAR = 2026, STORAGE_KEY = "mcu_checklist_v7";
-let watched = {}, watchedEpisodes = {}, expandedId = null, currentFilter = "all", currentSearch = "";
+const CURRENT_YEAR = 2026, STORAGE_KEY = "mcu_checklist_v15";
+let watched = {}, watchedOther = {}, watchedEpisodes = {}, watchedEpisodesOther = {}, expandedId = null, currentFilter = "all", currentSearch = "", currentFilterOther = "all", currentSearchOther = "";
 
 const mcuData = {
   "phase-1": { title: "Фаза 1", items: [
-    { id: "iron1", title: "Железный человек", year: 2008, type: "film", director: "Джон Фавро", duration: "126 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg", description: "Тони Старк — гениальный изобретатель и миллиардер.", tags: ["Тони Старк", "Пеппер Поттс"] },
-    { id: "hulk1", title: "Невероятный Халк", year: 2008, type: "film", director: "Луи Летеррье", duration: "112 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTUyNzk3MjA1OF5BMl5BanBnXkFtZTcwMTE1Njg2MQ@@._V1_SX300.jpg", description: "Брюс Бэннер превращается в зелёного гиганта Халка.", tags: ["Брюс Бэннер", "Бетти Росс"] },
-    { id: "iron2", title: "Железный человек 2", year: 2010, type: "film", director: "Джон Фавро", duration: "124 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTM0MDgwNjMyMl5BMl5BanBnXkFtZTcwNTg3NzAzMw@@._V1_SX300.jpg", description: "Тони Старк сталкивается с новым врагом.", tags: ["Тони Старк", "Чёрная Вдова"] },
-    { id: "thor1", title: "Тор", year: 2011, type: "film", director: "Кеннет Брана", duration: "115 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTYxMjA5NDMzNV5BMl5BanBnXkFtZTcwOTk2Mjk3NQ@@._V1_SX300.jpg", description: "Бог Тор изгнан из Асгарда на Землю.", tags: ["Тор", "Локи"] },
-    { id: "cap1", title: "Первый мститель", year: 2011, type: "film", director: "Джо Джонстон", duration: "124 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTYzOTc2NzU3N15BMl5BanBnXkFtZTcwNjY3MDE3NQ@@._V1_SX300.jpg", description: "Стив Роджерс становится суперсолдатом.", tags: ["Стив Роджерс", "Баки Барнс"] },
-    { id: "avengers1", title: "Мстители", year: 2012, type: "film", director: "Джосс Уидон", duration: "143 мин", poster: "https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGI2YTI1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg", description: "Команда супергероев спасает Землю.", tags: ["Команда", "Локи"] }
+    { id: "iron1", title: "Железный человек", year: 2008, type: "film", director: "Джон Фавро", duration: "126 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg", shortDesc: "Тони Старк создаёт первый бронированный костюм.", description: "Тони Старк — гениальный изобретатель и миллиардер. Попав в плен к террористам, он создаёт бронированный костюм, чтобы спастись, и становится супергероем Железным человеком.", tags: ["Тони Старк", "Пеппер Поттс"] },
+    { id: "hulk1", title: "Невероятный Халк", year: 2008, type: "film", director: "Луи Летеррье", duration: "112 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTUyNzk3MjA1OF5BMl5BanBnXkFtZTcwMTE1Njg2MQ@@._V1_SX300.jpg", shortDesc: "Учёный Брюс Бэннер превращается в зелёного гиганта.", description: "Брюс Бэннер — учёный, который в результате эксперимента превращается в зелёного гиганта Халка, когда злится.", tags: ["Брюс Бэннер", "Бетти Росс"] },
+    { id: "iron2", title: "Железный человек 2", year: 2010, type: "film", director: "Джон Фавро", duration: "124 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTM0MDgwNjMyMl5BMl5BanBnXkFtZTcwNTg3NzAzMw@@._V1_SX300.jpg", shortDesc: "Тони Старк сталкивается с новым врагом — Иваном Ванко.", description: "Мир узнал, что Тони Старк — Железный человек. Правительство требует передать технологию, а из России появляется новый враг.", tags: ["Тони Старк", "Чёрная Вдова"] },
+    { id: "thor1", title: "Тор", year: 2011, type: "film", director: "Кеннет Брана", duration: "115 мин", poster: "posters/thor1.jpg", shortDesc: "Бог Тор изгнан из Асгарда и должен доказать свою достойность.", description: "Могущественный, но высокомерный бог Тор изгнан из Асгарда на Землю. Лишённый силы, он должен научиться смирению.", tags: ["Тор", "Локи"] },
+    { id: "cap1", title: "Первый мститель", year: 2011, type: "film", director: "Джо Джонстон", duration: "124 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTYzOTc2NzU3N15BMl5BanBnXkFtZTcwNjY3MDE3NQ@@._V1_SX300.jpg", shortDesc: "Хилый Стив Роджерс становится суперсолдатом во время Второй мировой.", description: "Хилый, но храбрый Стив Роджерс становится суперсолдатом во время Второй мировой войны. Он сражается с нацистской организацией ГИДРА.", tags: ["Стив Роджерс", "Баки Барнс"] },
+    { id: "avengers1", title: "Мстители", year: 2012, type: "film", director: "Джосс Уидон", duration: "143 мин", poster: "https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGI2YTI1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg", shortDesc: "Ник Фьюри собирает команду супергероев для спасения Земли.", description: "Локи возвращается с армией читаури, чтобы захватить Землю. Ник Фьюри собирает команду супергероев.", tags: ["Команда", "Локи"] }
   ]},
   "phase-2": { title: "Фаза 2", items: [
-    { id: "iron3", title: "Железный человек 3", year: 2013, type: "film", director: "Шейн Блэк", duration: "130 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_SX300.jpg", description: "Тони Старк против Мандарина.", tags: ["Тони Старк", "Мандарин"] },
-    { id: "thor2", title: "Тор 2: Царство тьмы", year: 2013, type: "film", director: "Алан Тейлор", duration: "112 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTQyNzAwOTUxOF5BMl5BanBnXkFtZTcwMTE0OTc5OQ@@._V1_SX300.jpg", description: "Тор и Локи против тёмных эльфов.", tags: ["Тор", "Локи"] },
-    { id: "cap2", title: "Первый мститель: Другая война", year: 2014, type: "film", director: "Братья Руссо", duration: "136 мин", poster: "https://m.media-amazon.com/images/M/MV5BMzA2NDkwODAwM15BMl5BanBnXkFtZTgwODk5MTgzMTE@._V1_SX300.jpg", description: "Капитан Америка раскрывает заговор.", tags: ["Стив Роджерс", "Зимний солдат"] },
-    { id: "gotg1", title: "Стражи Галактики", year: 2014, type: "film", director: "Джеймс Ганн", duration: "121 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTAwMjU5OTgxNjZeQTJeQWpwZ15BbWU4MDUxNDYxODEx._V1_SX300.jpg", description: "Группа преступников спасает галактику.", tags: ["Звёздный Лорд", "Гамора"] },
-    { id: "avengers2", title: "Мстители: Эра Альтрона", year: 2015, type: "film", director: "Джосс Уидон", duration: "141 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTM4OGJmNWMtOTM4Ni00NTE3LTg3MDItZmQxYjc4N2JhNmUxXkEyXkFqcGdeQXVyNTgzMDMzMTg@._V1_SX300.jpg", description: "Мстители против Альтрона.", tags: ["Альтрон", "Вижн"] },
-    { id: "ant1", title: "Человек-муравей", year: 2015, type: "film", director: "Пейтон Рид", duration: "117 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjM2NTQ5Mzc2M15BMl5BanBnXkFtZTgwNTcxMDI2NTE@._V1_SX300.jpg", description: "Скотт Лэнг становится Человеком-муравьём.", tags: ["Скотт Лэнг", "Хэнк Пим"] }
+    { id: "iron3", title: "Железный человек 3", year: 2013, type: "film", director: "Шейн Блэк", duration: "130 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_SX300.jpg", shortDesc: "Тони Старк противостоит таинственному террористу Мандарину.", description: "После битвы за Нью-Йорк Тони Старк страдает от панических атак. Новый террорист Мандарин объявляет войну США.", tags: ["Тони Старк", "Мандарин"] },
+    { id: "thor2", title: "Тор 2: Царство тьмы", year: 2013, type: "film", director: "Алан Тейлор", duration: "112 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTQyNzAwOTUxOF5BMl5BanBnXkFtZTcwMTE0OTc5OQ@@._V1_SX300.jpg", shortDesc: "Тор и Локи объединяются против тёмных эльфов.", description: "Древняя раса тёмных эльфов во главе с Малекитом хочет погрузить вселенную во мрак.", tags: ["Тор", "Локи"] },
+    { id: "cap2", title: "Первый мститель: Другая война", year: 2014, type: "film", director: "Братья Руссо", duration: "136 мин", poster: "https://m.media-amazon.com/images/M/MV5BMzA2NDkwODAwM15BMl5BanBnXkFtZTgwODk5MTgzMTE@._V1_SX300.jpg", shortDesc: "Капитан Америка раскрывает масштабный заговор внутри Щ.И.Т.", description: "Стив Роджерс адаптируется к современному миру, но на Щ.И.Т. совершается нападение.", tags: ["Стив Роджерс", "Зимний солдат"] },
+    { id: "gotg1", title: "Стражи Галактики", year: 2014, type: "film", director: "Джеймс Ганн", duration: "121 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTAwMjU5OTgxNjZeQTJeQWpwZ15BbWU4MDUxNDYxODEx._V1_SX300.jpg", shortDesc: "Группа космических преступников объединяется для спасения галактики.", description: "Питер Квилл похищает загадочную сферу и становится целью охотника Ронана.", tags: ["Звёздный Лорд", "Гамора"] },
+    { id: "avengers2", title: "Мстители: Эра Альтрона", year: 2015, type: "film", director: "Джосс Уидон", duration: "141 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTM4OGJmNWMtOTM4Ni00NTE3LTg3MDItZmQxYjc4N2JhNmUxXkEyXkFqcGdeQXVyNTgzMDMzMTg@._V1_SX300.jpg", shortDesc: "Мстители сражаются с искусственным интеллектом Альтроном.", description: "Тони Старк создаёт искусственный интеллект Альтрона для защиты мира, но тот решает уничтожить человечество.", tags: ["Альтрон", "Вижн"] },
+    { id: "ant1", title: "Человек-муравей", year: 2015, type: "film", director: "Пейтон Рид", duration: "117 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjM2NTQ5Mzc2M15BMl5BanBnXkFtZTgwNTcxMDI2NTE@._V1_SX300.jpg", shortDesc: "Скотт Лэнг получает костюм, позволяющий уменьшаться.", description: "Вор-домушник Скотт Лэнг получает костюм, позволяющий уменьшаться до размера муравья.", tags: ["Скотт Лэнг", "Хэнк Пим"] }
   ]},
   "phase-3": { title: "Фаза 3", items: [
-    { id: "cap3", title: "Первый мститель: Противостояние", year: 2016, type: "film", director: "Братья Руссо", duration: "147 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg", description: "Мстители разделяются на две фракции.", tags: ["Стив Роджерс", "Тони Старк"] },
-    { id: "strange1", title: "Доктор Стрэндж", year: 2016, type: "film", director: "Скотт Дерриксон", duration: "115 мин", poster: "https://m.media-amazon.com/images/M/MV5BNjgwNzAzNjk1Nl5BMl5BanBnXkFtZTgwMzQ2NjI1OTE@._V1_SX300.jpg", description: "Хирург становится Верховным Магом.", tags: ["Стивен Стрэндж", "Вонг"] },
-    { id: "gotg2", title: "Стражи Галактики 2", year: 2017, type: "film", director: "Джеймс Ганн", duration: "136 мин", poster: "https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg", description: "Стражи узнают тайну происхождения Питера.", tags: ["Питер Квилл", "Эго"] },
-    { id: "spider1", title: "Человек-паук: Возвращение домой", year: 2017, type: "film", director: "Джон Уоттс", duration: "133 мин", poster: "https://m.media-amazon.com/images/M/MV5BNTk4ODQ1MzgzNl5BMl5BanBnXkFtZTgwMTMyMzM4MTI@._V1_SX300.jpg", description: "Питер Паркер учится быть героем.", tags: ["Питер Паркер", "Тони Старк"] },
-    { id: "thor3", title: "Тор: Рагнарёк", year: 2017, type: "film", director: "Тайка Вайтити", duration: "130 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjMyNDkzMzI1OF5BMl5BanBnXkFtZTgwODcxODg5MjI@._V1_SX300.jpg", description: "Тор сражается на арене с Халком.", tags: ["Тор", "Халк", "Хела"] },
-    { id: "panther1", title: "Чёрная Пантера", year: 2018, type: "film", director: "Райан Куглер", duration: "134 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTg1MTY2MjYzNV5BMl5BanBnXkFtZTgwMTc4NTMwNDI@._V1_SX300.jpg", description: "Т'Чалла защищает Ваканду.", tags: ["Т'Чалла", "Киллмонгер"] },
-    { id: "avengers3", title: "Мстители: Война бесконечности", year: 2018, type: "film", director: "Братья Руссо", duration: "149 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg", description: "Танос собирает Камни Бесконечности.", tags: ["Танос", "Все герои"] },
-    { id: "ant2", title: "Человек-муравей и Оса", year: 2018, type: "film", director: "Пейтон Рид", duration: "118 мин", poster: "https://m.media-amazon.com/images/M/MV5BYjcyYTk0N2YtMzc4ZC00Y2E0LWFkNDgtNjE1MzZmMGE1YjY1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg", description: "Скотт и Хоуп ищут Джанет.", tags: ["Скотт Лэнг", "Хоуп"] },
-    { id: "captain2", title: "Капитан Марвел", year: 2019, type: "film", director: "Анна Боден, Райан Флек", duration: "124 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTE0YWFmOTMtYTU2ZS00ZTIxLWE3OTEtYTNiYzBkZjViZThiXkEyXkFqcGdeQXVyODMzMzQ4OTI@._V1_SX300.jpg", description: "Кэрол Дэнверс обретает силу.", tags: ["Кэрол Дэнверс", "Ник Фьюри"] },
-    { id: "avengers4", title: "Мстители: Финал", year: 2019, type: "film", director: "Братья Руссо", duration: "181 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg", description: "Финальная битва с Таносом.", tags: ["Танос", "Все герои"] },
-    { id: "spider2", title: "Человек-паук: Вдали от дома", year: 2019, type: "film", director: "Джон Уоттс", duration: "129 мин", poster: "https://m.media-amazon.com/images/M/MV5BMGZlNTY1ZWUtYTMzNC00ZjUyLWE0MjQtMTMxN2E3ODYxMWVmXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg", description: "Питер едет в Европу.", tags: ["Питер Паркер", "Мистерио"] }
+    { id: "cap3", title: "Первый мститель: Противостояние", year: 2016, type: "film", director: "Братья Руссо", duration: "147 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg", shortDesc: "Мстители разделяются на две фракции из-за контроля над сверхлюдьми.", description: "После инцидентов Мстители разделяются на две фракции: одни за контроль правительства, другие против.", tags: ["Стив Роджерс", "Тони Старк"] },
+    { id: "strange1", title: "Доктор Стрэндж", year: 2016, type: "film", director: "Скотт Дерриксон", duration: "115 мин", poster: "https://m.media-amazon.com/images/M/MV5BNjgwNzAzNjk1Nl5BMl5BanBnXkFtZTgwMzQ2NjI1OTE@._V1_SX300.jpg", shortDesc: "Хирург Стивен Стрэндж становится Верховным Магом после аварии.", description: "Блестящий хирург Стивен Стрэндж после аварии теряет возможность оперировать.", tags: ["Стивен Стрэндж", "Вонг"] },
+    { id: "gotg2", title: "Стражи Галактики 2", year: 2017, type: "film", director: "Джеймс Ганн", duration: "136 мин", poster: "https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg", shortDesc: "Стражи узнают тайну происхождения Питера Квилла.", description: "Стражи узнают тайну происхождения Питера Квилла — его отец оказывается могущественным celestial.", tags: ["Питер Квилл", "Эго"] },
+    { id: "spider1", title: "Человек-паук: Возвращение домой", year: 2017, type: "film", director: "Джон Уоттс", duration: "133 мин", poster: "https://m.media-amazon.com/images/M/MV5BNTk4ODQ1MzgzNl5BMl5BanBnXkFtZTgwMTMyMzM4MTI@._V1_SX300.jpg", shortDesc: "Питер Паркер учится быть героем под наставничеством Тони Старка.", description: "Питер Паркер пытается совмещать жизнь школьника и супергероя под наставничеством Тони Старка.", tags: ["Питер Паркер", "Тони Старк"] },
+    { id: "thor3", title: "Тор: Рагнарёк", year: 2017, type: "film", director: "Тайка Вайтити", duration: "130 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjMyNDkzMzI1OF5BMl5BanBnXkFtZTgwODcxODg5MjI@._V1_SX300.jpg", shortDesc: "Тор сражается на гладиаторской арене с Халком, чтобы спасти Асгард.", description: "Тор заключён на другой планете без молота. Ему предстоит сразиться на арене с Халком.", tags: ["Тор", "Халк", "Хела"] },
+    { id: "panther1", title: "Чёрная Пантера", year: 2018, type: "film", director: "Райан Куглер", duration: "134 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTg1MTY2MjYzNV5BMl5BanBnXkFtZTgwMTc4NTMwNDI@._V1_SX300.jpg", shortDesc: "Т'Чалла возвращается в Ваканду, чтобы занять трон и защитить страну.", description: "Т'Чалла возвращается в Ваканду, чтобы занять трон. Но появляется Киллмонгер.", tags: ["Т'Чалла", "Киллмонгер"] },
+    { id: "avengers3", title: "Мстители: Война бесконечности", year: 2018, type: "film", director: "Братья Руссо", duration: "149 мин", poster: "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg", shortDesc: "Танос собирает Камни Бесконечности, чтобы уничтожить половину жизни.", description: "Танос собирает все шесть Камней Бесконечности, чтобы уничтожить половину жизни во вселенной.", tags: ["Танос", "Все герои"] },
+    { id: "ant2", title: "Человек-муравей и Оса", year: 2018, type: "film", director: "Пейтон Рид", duration: "118 мин", poster: "https://m.media-amazon.com/images/M/MV5BYjcyYTk0N2YtMzc4ZC00Y2E0LWFkNDgtNjE1MzZmMGE1YjY1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg", shortDesc: "Скотт и Хоуп ищут пропавшую в Квантовом мире Джанет ван Дайн.", description: "Скотт Лэнг находится под домашним арестом. Хэнк Пим и Хоуп ван Дайн ищут пропавшую Джанет.", tags: ["Скотт Лэнг", "Хоуп"] },
+    { id: "captain2", title: "Капитан Марвел", year: 2019, type: "film", director: "Анна Боден", duration: "124 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTE0YWFmOTMtYTU2ZS00ZTIxLWE3OTEtYTNiYzBkZjViZThiXkEyXkFqcGdeQXVyODMzMzQ4OTI@._V1_SX300.jpg", shortDesc: "Кэрол Дэнверс вспоминает своё прошлое и обретает космическую силу.", description: "Кэрол Дэнверс — одна из самых могущественных героинь вселенной.", tags: ["Кэрол Дэнверс", "Ник Фьюри"] },
+    { id: "avengers4", title: "Мстители: Финал", year: 2019, type: "film", director: "Братья Руссо", duration: "181 мин", poster: "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg", shortDesc: "Оставшиеся Мстители ищут способ вернуть стёртую половину вселенной.", description: "После щелчка Таноса половина жизни уничтожена. Оставшиеся Мстители должны найти способ вернуть всё назад.", tags: ["Танос", "Все герои"] },
+    { id: "spider2", title: "Человек-паук: Вдали от дома", year: 2019, type: "film", director: "Джон Уоттс", duration: "129 мин", poster: "https://m.media-amazon.com/images/M/MV5BMGZlNTY1ZWUtYTMzNC00ZjUyLWE0MjQtMTMxN2E3ODYxMWVmXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg", shortDesc: "Питер Паркер едет в Европу, но сталкивается с новыми угрозами.", description: "После событий Финала Питер Паркер едет в Европу в школьную поездку.", tags: ["Питер Паркер", "Мистерио"] }
   ]},
   "phase-4": { title: "Фаза 4", items: [
-    { id: "widow", title: "Чёрная Вдова", year: 2021, type: "film", director: "Кейт Шортланд", duration: "134 мин", description: "Наташа Романофф возвращается к прошлому.", tags: ["Наташа", "Йелена"] },
-    { id: "shang", title: "Шан-Чи и легенда десяти колец", year: 2021, type: "film", director: "Дестин Дэниел Креттон", duration: "132 мин", description: "Шан-Чи против отца.", tags: ["Шан-Чи", "Вэнь У"] },
-    { id: "eternals", title: "Вечные", year: 2021, type: "film", director: "Хлоя Чжао", duration: "156 мин", description: "Бессмертные защищают Землю.", tags: ["Серси", "Икарис"] },
-    { id: "spider3", title: "Человек-паук: Нет пути домой", year: 2021, type: "film", director: "Джон Уоттс", duration: "148 мин", description: "Мультивселенная открыта.", tags: ["Питер Паркер", "Док Стрэндж"] },
-    { id: "strange2", title: "Доктор Стрэндж: В мультивселенной безумия", year: 2022, type: "film", director: "Сэм Рэйми", duration: "126 мин", description: "Стрэндж против Ванды.", tags: ["Стивен Стрэндж", "Ванда"] },
-    { id: "thor4", title: "Тор: Любовь и гром", year: 2022, type: "film", director: "Тайка Вайтити", duration: "118 мин", description: "Тор и Джейн Фостер.", tags: ["Тор", "Джейн Фостер"] },
-    { id: "panther2", title: "Чёрная Пантера: Ваканда навеки", year: 2022, type: "film", director: "Райан Куглер", duration: "161 мин", description: "Ваканда против Талокана.", tags: ["Шури", "Нэмор"] },
-    { id: "werewolf", title: "Оборотень по ночам", year: 2022, type: "special", director: "Майкл Джаккино", duration: "53 мин", description: "Охотники на монстров соревнуются за древнюю реликвию.", tags: ["Оборотень", "Эльза Бладстоун"] },
-    { id: "gotg-holiday", title: "Праздничный выпуск Стражей Галактики", year: 2022, type: "special", director: "Джеймс Ганн", duration: "42 мин", description: "Стражи пытаются устроить Рождество для Питера Квилла.", tags: ["Звёздный Лорд", "Дракс", "Мантис"] },
-    { id: "iamgroot", title: "Я есть Грут", year: 2022, type: "series", episodes: [{number:1,title:"Первый день Грута"},{number:2,title:"Грут в погоне за попой"},{number:3,title:"Грут и космический корабль"},{number:4,title:"Грут танцует"},{number:5,title:"Грут и магнитогор"}], description: "Короткометражки про малыша Грута.", tags: ["Грут", "Стражи Галактики"] },
-    { id: "wandavision", title: "Ванда/Вижен", year: 2021, type: "series", episodes: [{number:1,title:"Снято перед живой аудиторией"},{number:2,title:"Не переключайтесь"},{number:3,title:"Сейчас на цветном"},{number:4,title:"Мы прерываем эту программу"},{number:5,title:"В особо оригинальном стиле"},{number:6,title:"Весь день 3 ноября"},{number:7,title:"Разрывая четвёртую стену"},{number:8,title:"Предыдущие серии"},{number:9,title:"Серия финалов"}], description: "Ванда и Вижен в Вествью.", tags: ["Ванда", "Вижен"] },
-    { id: "falcon", title: "Сокол и Зимний солдат", year: 2021, type: "series", episodes: [{number:1,title:"Новый мировой порядок"},{number:2,title:"Звёзды и полосы"},{number:3,title:"Силовой вакуум"},{number:4,title:"По всему миру"},{number:5,title:"Правда"},{number:6,title:"Один мир, один народ"}], description: "Сэм и Баки против Флаг-смэшеров.", tags: ["Сэм Уилсон", "Баки"] },
-    { id: "loki1", title: "Локи (сезон 1)", year: 2021, type: "series", episodes: [{number:1,title:"Славная миссия"},{number:2,title:"Вариант"},{number:3,title:"Ламентис"},{number:4,title:"Шумиха"},{number:5,title:"Путешествие в тайну"},{number:6,title:"На все времена. Всегда."}], description: "Локи в TVA.", tags: ["Локи", "Сильвия"] },
-    { id: "whatif1", title: "Что, если...? (сезон 1)", year: 2021, type: "series", episodes: [{number:1,title:"Капитан Картер стала бы Первым мстителем?"},{number:2,title:"Т'Чалла стал бы Звёздным Лордом?"},{number:3,title:"мир потерял бы своих сильнейших героев?"},{number:4,title:"Доктор Стрэндж потерял бы своё сердце вместо рук?"},{number:5,title:"зомби?!"},{number:6,title:"Киллмонгер спас бы Тони Старка?"},{number:7,title:"Тор был бы единственным ребёнком?"},{number:8,title:"Ультрон победил бы?"},{number:9,title:"Наблюдатель нарушил бы свою клятву?"}], description: "Альтернативные версии MCU.", tags: ["Наблюдатель"] },
-    { id: "hawkeye", title: "Соколиный глаз", year: 2021, type: "series", episodes: [{number:1,title:"Никогда не встречай своих героев"},{number:2,title:"Скройся и слушай"},{number:3,title:"Эхо"},{number:4,title:"Партнёры, верно?"},{number:5,title:"Ронин"},{number:6,title:"Так вот это такой Рождественский сокол?"}], description: "Клинт и Кейт против Кингпина.", tags: ["Клинт Бартон", "Кейт"] },
-    { id: "moon", title: "Лунный рыцарь", year: 2022, type: "series", episodes: [{number:1,title:"Правда бога"},{number:2,title:"Призови костюм"},{number:3,title:"Дружелюбный тип"},{number:4,title:"Гробница"},{number:5,title:"Аспект безумия"},{number:6,title:"Боги и монстры"}], description: "Марк Спектор и Хонсу.", tags: ["Марк Спектор", "Хонсу"] },
-    { id: "msmarvel", title: "Мисс Марвел", year: 2022, type: "series", episodes: [{number:1,title:"Новое поколение"},{number:2,title:"Покорённый"},{number:3,title:"Освещённый"},{number:4,title:"Пограничный контроль"},{number:5,title:"Время приключений"},{number:6,title:"Никаких нормальных"}], description: "Камала Хан обретает силы.", tags: ["Камала Хан"] },
-    { id: "shehulk", title: "Женщина-Халк: Адвокат", year: 2022, type: "series", episodes: [{number:1,title:"Обычный человек"},{number:2,title:"Суперзакон"},{number:3,title:"Необычный подозреваемый"},{number:4,title:"Это не альфа"},{number:5,title:"Средний тон фиолетового"},{number:6,title:"Просто Уолтер"},{number:7,title:"Отдых и релаксация"},{number:8,title:"Четвёртая стена"},{number:9,title:"Это кто-то стучится?"}], description: "Джен Уолтерс становится Халком.", tags: ["Джен Уолтерс"] }
+    { id: "widow", title: "Чёрная Вдова", year: 2021, type: "film", director: "Кейт Шортланд", duration: "134 мин", poster: "posters/widow.jpg", shortDesc: "Наташа Романофф возвращается к своему прошлому в Красной Комнате.", description: "Наташа Романофф возвращается к своему прошлому. Она встречается с «семьёй» из программы Красная Комната.", tags: ["Наташа", "Йелена"] },
+    { id: "shang", title: "Шан-Чи и легенда десяти колец", year: 2021, type: "film", director: "Дестин Дэниел Креттон", duration: "132 мин", poster: "posters/shang.jpg", shortDesc: "Шан-Чи вынужден вернуться к отцу и организации Десять Колец.", description: "Шан-Чи вынужден вернуться к отцу Вэнь У, главе организации Десять Колец.", tags: ["Шан-Чи", "Вэнь У"] },
+    { id: "eternals", title: "Вечные", year: 2021, type: "film", director: "Хлоя Чжао", duration: "156 мин", poster: "posters/eternals.jpg", shortDesc: "Древние бессмертные существа выходят из тени, чтобы спасти Землю.", description: "Бессмертные существа, жившие на Земле тысячелетия, выходят из тени.", tags: ["Серси", "Икарис"] },
+    { id: "spider3", title: "Человек-паук: Нет пути домой", year: 2021, type: "film", director: "Джон Уоттс", duration: "148 мин", poster: "posters/spider3.jpg", shortDesc: "Личность Питера раскрыта, и мультивселенная открывается.", description: "Личность Питера Паркера раскрыта. Он обращается к Доктору Стрэнджу за помощью.", tags: ["Питер Паркер", "Док Стрэндж"] },
+    { id: "strange2", title: "Доктор Стрэндж: В мультивселенной безумия", year: 2022, type: "film", director: "Сэм Рэйми", duration: "126 мин", poster: "posters/strange2.jpg", shortDesc: "Доктор Стрэндж защищает Америку Чавес от Ванды Максимофф.", description: "Стрэндж защищает Америку Чавес от Ванды Максимофф.", tags: ["Стивен Стрэндж", "Ванда"] },
+    { id: "thor4", title: "Тор: Любовь и гром", year: 2022, type: "film", director: "Тайка Вайтити", duration: "118 мин", poster: "posters/thor4.jpg", shortDesc: "Тор встречает свою бывшую Джейн Фостер, ставшую Могучим Тором.", description: "Тор путешествует с Стражами Галактики, но его вызывают в Ваканду.", tags: ["Тор", "Джейн Фостер"] },
+    { id: "panther2", title: "Чёрная Пантера: Ваканда навеки", year: 2022, type: "film", director: "Райан Куглер", duration: "161 мин", poster: "posters/panther2.jpg", shortDesc: "Ваканда сталкивается с новой угрозой из подводного королевства Талокан.", description: "После смерти Т'Чаллы Ваканда сталкивается с новой угрозой.", tags: ["Шури", "Нэмор"] },
+    { id: "werewolf", title: "Оборотень по ночам", year: 2022, type: "special", director: "Майкл Джаккино", duration: "53 мин", poster: "posters/werewolf.jpg", shortDesc: "Охотники на монстров соревнуются за древнюю реликвию.", description: "Охотники на монстров соревнуются за древнюю реликвию в мрачном особняке.", tags: ["Оборотень", "Эльза Бладстоун"] },
+    { id: "gotg-holiday", title: "Праздничный выпуск Стражей Галактики", year: 2022, type: "special", director: "Джеймс Ганн", duration: "42 мин", poster: "posters/gotg-holiday.jpg", shortDesc: "Стражи пытаются устроить идеальное Рождество для Питера Квилла.", description: "Стражи пытаются устроить Рождество для Питера Квилла.", tags: ["Звёздный Лорд", "Дракс", "Мантис"] },
+    { id: "wandavision", title: "Ванда/Вижен", year: 2021, type: "series", director: "Мэтт Шэкман", duration: "9 серий", poster: "posters/wandavision.jpg", shortDesc: "Ванда и Вижен живут идеальной жизнью в странном пригороде.", description: "Ванда Максимофф и Вижен живут идеальной жизнью в пригороде Вествью. Но их реальность оказывается симуляцией.", tags: ["Ванда", "Вижен"], episodes: [{number:1,title:"Снято перед живой аудиторией"},{number:2,title:"Не переключайтесь"},{number:3,title:"Сейчас на цветном"},{number:4,title:"Мы прерываем эту программу"},{number:5,title:"В особо оригинальном стиле"},{number:6,title:"Весь день 3 ноября"},{number:7,title:"Разрывая четвёртую стену"},{number:8,title:"Предыдущие серии"},{number:9,title:"Серия финалов"}] },
+    { id: "falcon", title: "Сокол и Зимний солдат", year: 2021, type: "series", director: "Кари Скогланд", duration: "6 серий", poster: "posters/falcon.jpg", shortDesc: "Сэм Уилсон и Баки Барнс объединяются против Флаг-смэшеров.", description: "Сэм Уилсон и Баки Барнс объединяются против новых угрозов.", tags: ["Сэм Уилсон", "Баки"], episodes: [{number:1,title:"Новый мировой порядок"},{number:2,title:"Звёзды и полосы"},{number:3,title:"Силовой вакуум"},{number:4,title:"По всему миру"},{number:5,title:"Правда"},{number:6,title:"Один мир, один народ"}] },
+    { id: "loki1", title: "Локи (сезон 1)", year: 2021, type: "series", director: "Кейт Херрон", duration: "6 серий", poster: "posters/loki1.jpg", shortDesc: "Локи попадает в Управление Временными Аномалиями (TVA).", description: "После кражи Тессеракта в Финале Локи попадает в Управление Временными Аномалий.", tags: ["Локи", "Сильвия"], episodes: [{number:1,title:"Славная миссия"},{number:2,title:"Вариант"},{number:3,title:"Ламентис"},{number:4,title:"Шумиха"},{number:5,title:"Путешествие в тайну"},{number:6,title:"На все времена. Всегда."}] },
+    { id: "whatif1", title: "Что, если...? (сезон 1)", year: 2021, type: "series", director: "Брайан Andrews", duration: "9 серий", poster: "posters/whatif1.jpg", shortDesc: "Наблюдатель показывает альтернативные версии ключевых событий MCU.", description: "Наблюдатель показывает альтернативные версии ключевых моментов MCU.", tags: ["Наблюдатель"], episodes: [{number:1,title:"Капитан Картер стала бы Первым мстителем?"},{number:2,title:"Т'Чалла стал бы Звёздным Лордом?"},{number:3,title:"Мир потерял бы своих сильнейших героев?"},{number:4,title:"Доктор Стрэндж потерял бы своё сердце вместо рук?"},{number:5,title:"Зомби?!"},{number:6,title:"Киллмонгер спас бы Тони Старка?"},{number:7,title:"Тор был бы единственным ребёнком?"},{number:8,title:"Ультрон победил бы?"},{number:9,title:"Наблюдатель нарушил бы свою клятву?"}] },
+    { id: "hawkeye", title: "Соколиный глаз", year: 2021, type: "series", director: "Рис Томас", duration: "6 серий", poster: "posters/hawkeye.jpg", shortDesc: "Клинт Бартон обучает юную Кейт Бишоп и сражается с Кингпином.", description: "Клинт Бартон хочет вернуться к семье на Рождество, но вынужден объединиться с юной Кейт Бишоп.", tags: ["Клинт Бартон", "Кейт"], episodes: [{number:1,title:"Никогда не встречай своих героев"},{number:2,title:"Скройся и слушай"},{number:3,title:"Эхо"},{number:4,title:"Партнёры, верно?"},{number:5,title:"Ронин"},{number:6,title:"Так вот это такой Рождественский сокол?"}] },
+    { id: "moon", title: "Лунный рыцарь", year: 2022, type: "series", director: "Мохамед Диаб", duration: "6 серий", poster: "posters/moon.jpg", shortDesc: "Марк Спектор борется с диссоциативным расстройством и богом Хонсу.", description: "Стивен Грант страдает от провалов в памяти и обнаруживает, что у него диссоциативное расстройство идентичности.", tags: ["Марк Спектор", "Хонсу"], episodes: [{number:1,title:"Правда бога"},{number:2,title:"Призови костюм"},{number:3,title:"Дружелюбный тип"},{number:4,title:"Гробница"},{number:5,title:"Аспект безумия"},{number:6,title:"Боги и монстры"}] },
+    { id: "msmarvel", title: "Мисс Марвел", year: 2022, type: "series", director: "Адил Эль Арби", duration: "6 серий", poster: "posters/msmarvel.jpg", shortDesc: "Подросток Камала Хан обретает космические сверхспособности.", description: "Камала Хан — подросток-фанатка Капитана Марвел. Она находит магический браслет.", tags: ["Камала Хан"], episodes: [{number:1,title:"Новое поколение"},{number:2,title:"Покорённый"},{number:3,title:"Освещённый"},{number:4,title:"Пограничный контроль"},{number:5,title:"Время приключений"},{number:6,title:"Никаких нормальных"}] },
+    { id: "shehulk", title: "Женщина-Халк: Адвокат", year: 2022, type: "series", director: "Катриона Маккензи", duration: "9 серий", poster: "posters/shehulk.jpg", shortDesc: "Адвокат Джен Уолтерс получает силы Халка и идёт в суд.", description: "Дженнифер Уолтерс — адвокат, которая после аварии с кровью Кузи получает способности Халка.", tags: ["Джен Уолтерс"], episodes: [{number:1,title:"Обычный человек"},{number:2,title:"Суперзакон"},{number:3,title:"Необычный подозреваемый"},{number:4,title:"Это не альфа"},{number:5,title:"Средний тон фиолетового"},{number:6,title:"Просто Уолтер"},{number:7,title:"Отдых и релаксация"},{number:8,title:"Четвёртая стена"},{number:9,title:"Это кто-то стучится?"}] },
+    { id: "iamgroot", title: "Я есть Грут", year: 2022, type: "series", director: "—", duration: "5 серий", poster: "posters/iamgroot.jpg", shortDesc: "Короткометражные приключения малыша Грута.", description: "Короткометражки про малыша Грута и его приключения.", tags: ["Грут", "Стражи Галактики"], episodes: [{number:1,title:"Первый день Грута"},{number:2,title:"Грут в погоне за попой"},{number:3,title:"Грут и космический корабль"},{number:4,title:"Грут танцует"},{number:5,title:"Грут и магнитогор"}] }
   ]},
   "phase-5": { title: "Фаза 5", items: [
-    { id: "ant3", title: "Человек-муравей и Оса: Квантомания", year: 2023, type: "film", description: "Семья Лэнг-Пим против Канга.", tags: ["Скотт Лэнг", "Канг"] },
-    { id: "gotg3", title: "Стражи Галактики 3", year: 2023, type: "film", description: "Стражи спасают Ракету.", tags: ["Ракета", "Звёздный Лорд"] },
-    { id: "iamgroot2", title: "Я есть Грут (сезон 2)", year: 2023, type: "series", episodes: [{number:1,title:"Ты там, Грут? Это я, Кевин"},{number:2,title:"Первые шаги Грута"},{number:3,title:"Грут принимает ванну"},{number:4,title:"Сладкое угощение Грута"},{number:5,title:"Погоня Грута"}], description: "Новые короткие приключения малыша Грута.", tags: ["Грут", "Стражи Галактики"] },
-    { id: "marvels", title: "Марвелы", year: 2023, type: "film", description: "Три героини объединяются.", tags: ["Капитан Марвел", "Моника"] },
-    { id: "deadpool", title: "Дэдпул и Росомаха", year: 2024, type: "film", description: "Дэдпул и Росомаха в мультивселенной.", tags: ["Дэдпул", "Росомаха"] },
-    { id: "cap4", title: "Капитан Америка: Дивный новый мир", year: 2025, type: "film", description: "Сэм Уилсон как Капитан Америка.", tags: ["Сэм Уилсон", "Росс"] },
-    { id: "thunder", title: "Громобой", year: 2025, type: "film", description: "Команда антигероев.", tags: ["Йелена", "Баки"] },
-    { id: "loki2", title: "Локи (сезон 2)", year: 2023, type: "series", episodes: [{number:1,title:"Воссоединение"},{number:2,title:"Разрушенный храм"},{number:3,title:"1893"},{number:4,title:"Сердце времен"},{number:5,title:"Наука/Фантастика"},{number:6,title:"Гладиус"}], description: "Локи спасает мультивселенную.", tags: ["Локи", "Сильвия"] },
-    { id: "secret", title: "Тайное вторжение", year: 2023, type: "series", episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6}], description: "Скруллы вторгаются на Землю.", tags: ["Ник Фьюри", "Скруллы"] },
-    { id: "echo", title: "Эхо", year: 2024, type: "series", episodes: [{number:1},{number:2},{number:3},{number:4},{number:5}], description: "Майя Лопес против Кингпина.", tags: ["Майя Лопес", "Кингпин"] },
-    { id: "agatha", title: "Агата всё время", year: 2024, type: "series", episodes: [{number:1,title:"Видела ли ты эту ведьму?"},{number:2,title:"Дорога вперёд"},{number:3,title:"Через портал/Посмотри на них"},{number:4,title:"Если я не могу держать тебя"},{number:5,title:"Разрушение/Следуй моим голосом"},{number:6,title:"Пролог/Понимание"},{number:7,title:"Смерть/Рождение"},{number:8,title:"Последний эпизод"},{number:9,title:"Майорский спуск"}], description: "Агата проходит Дорогу Ведьм.", tags: ["Агата", "Билли"] },
-    { id: "daredevil", title: "Сорвиголова: Возрождение", year: 2025, type: "series", episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8},{number:9},{number:10},{number:11},{number:12},{number:13},{number:14},{number:15},{number:16},{number:17},{number:18}], description: "Мэтт Мёрдок против Фиска.", tags: ["Мэтт Мёрдок", "Кингпин"] },
-    { id: "ironheart", title: "Железное сердце", year: 2025, type: "series", episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6}], description: "Рири Уильямс создаёт броню.", tags: ["Рири Уильямс"] },
-    { id: "yourfriendly", title: "Ваши дружелюбные соседи", year: 2025, type: "series", episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8}], description: "Питер Паркер и Норман Озборн.", tags: ["Питер Паркер", "Норман Озборн"] }
+    { id: "ant3", title: "Человек-муравей и Оса: Квантомания", year: 2023, type: "film", director: "Пейтон Рид", duration: "125 мин", poster: "posters/ant3.jpg", shortDesc: "Семья Лэнг-Пим попадает в Квантовый мир и встречает Канга.", description: "Семья Лэнг-Пим попадает в Квантовый мир и сталкивается с Кангом Завоевателем.", tags: ["Скотт Лэнг", "Канг"] },
+    { id: "gotg3", title: "Стражи Галактики 3", year: 2023, type: "film", director: "Джеймс Ганн", duration: "150 мин", poster: "posters/gotg3.jpg", shortDesc: "Стражи отправляются в опасную миссию, чтобы спасти Ракету.", description: "Стражи пытаются спасти Ракету, чьё прошлое настигает его.", tags: ["Ракета", "Звёздный Лорд"] },
+    { id: "iamgroot2", title: "Я есть Грут (сезон 2)", year: 2023, type: "series", director: "—", duration: "5 серий", poster: "posters/iamgroot2.jpg", shortDesc: "Новые короткие приключения подросшего Грута.", description: "Новые короткие приключения малыша Грута в космосе.", tags: ["Грут", "Стражи Галактики"], episodes: [{number:1,title:"Ты там, Грут? Это я, Кевин"},{number:2,title:"Первые шаги Грута"},{number:3,title:"Грут принимает ванну"},{number:4,title:"Сладкое угощение Грута"},{number:5,title:"Погоня Грута"}] },
+    { id: "marvels", title: "Марвелы", year: 2023, type: "film", director: "Ниа Дакоста", duration: "105 мин", poster: "posters/marvels.jpg", shortDesc: "Кэрол, Моника и Камала обнаруживают, что их силы связаны.", description: "Кэрол Дэнверс, Моника Рамбо и Камала Хан обнаруживают, что их силы связаны.", tags: ["Капитан Марвел", "Моника"] },
+    { id: "deadpool", title: "Дэдпул и Росомаха", year: 2024, type: "film", director: "Шон Леви", duration: "127 мин", poster: "posters/deadpool.jpg", shortDesc: "Дэдпул и Росомаха отправляются в безумное путешествие по мультивселенной.", description: "Дэдпул попадает в TVA и должен спасти свою вселенную.", tags: ["Дэдпул", "Росомаха"] },
+    { id: "cap4", title: "Капитан Америка: Дивный новый мир", year: 2025, type: "film", director: "Джулиус Она", duration: "119 мин", poster: "posters/cap4.jpg", shortDesc: "Сэм Уилсон сталкивается с международным кризисом в роли Капитана.", description: "Сэм Уилсон в роли Капитана Америки оказывается в центре международного инцидента.", tags: ["Сэм Уилсон", "Росс"] },
+    { id: "thunder", title: "Громобой", year: 2025, type: "film", director: "Джейк Шрейер", duration: "128 мин", poster: "posters/thunder.jpg", shortDesc: "Валентина собирает команду антигероев для опасной миссии.", description: "Группа антигероев и злодеев, собранная Валентиной Аллегро де Фонтейн, должна выполнить опасную миссию.", tags: ["Йелена", "Баки"] },
+    { id: "loki2", title: "Локи (сезон 2)", year: 2023, type: "series", director: "Джастин Бейнс", duration: "6 серий", poster: "posters/loki2.jpg", shortDesc: "Локи перемещается во времени, пытаясь спасти мультивселенную.", description: "Локи перемещается во времени, пытаясь спасти Сильвию и предотвратить гибель TVA.", tags: ["Локи", "Сильвия"], episodes: [{number:1,title:"Воссоединение"},{number:2,title:"Разрушенный храм"},{number:3,title:"1893"},{number:4,title:"Сердце времен"},{number:5,title:"Наука/Фантастика"},{number:6,title:"Гладиус"}] },
+    { id: "secret", title: "Тайное вторжение", year: 2023, type: "series", director: "Али Селим", duration: "6 серий", poster: "posters/secret.jpg", shortDesc: "Ник Фьюри обнаруживает тайное вторжение скруллов на Землю.", description: "Ник Фьюри обнаруживает, что скруллы тайно инфильтруют Землю.", tags: ["Ник Фьюри", "Скруллы"], episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6}] },
+    { id: "echo", title: "Эхо", year: 2024, type: "series", director: "Сидни Фриланд", duration: "5 серий", poster: "posters/echo.jpg", shortDesc: "Майя Лопес возвращается домой и сталкивается со своим прошлым.", description: "Майя Лопес возвращается в родной город, чтобы разобраться со своим прошлым.", tags: ["Майя Лопес", "Кингпин"], episodes: [{number:1},{number:2},{number:3},{number:4},{number:5}] },
+    { id: "agatha", title: "Агата всё время", year: 2024, type: "series", director: "Джеймс Поншоль", duration: "9 серий", poster: "posters/agatha.jpg", shortDesc: "Агата Харкнесс собирает шабаш, чтобы пройти Дорогу Ведьм.", description: "Агата Харкнесс освобождается из-под земли Билли Максимова. Вместе с группой ведьм она проходит Дорогу Ведьм.", tags: ["Агата", "Билли"], episodes: [{number:1,title:"Видела ли ты эту ведьму?"},{number:2,title:"Дорога вперёд"},{number:3,title:"Через портал/Посмотри на них"},{number:4,title:"Если я не могу держать тебя"},{number:5,title:"Разрушение/Следуй моим голосом"},{number:6,title:"Пролог/Понимание"},{number:7,title:"Смерть/Рождение"},{number:8,title:"Последний эпизод"},{number:9,title:"Майорский спуск"}] },
+    { id: "daredevil", title: "Сорвиголова: Возрождение", year: 2025, type: "series", director: "Дарио Скардарамоне", duration: "18 серий", poster: "posters/daredevil.jpg", shortDesc: "Мэтт Мёрдок возвращается, чтобы остановить Уилсона Фиска.", description: "Мэтт Мёрдок сталкивается с Уилсоном Фиском, который баллотируется в мэры Нью-Йорка.", tags: ["Мэтт Мёрдок", "Кингпин"], episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8},{number:9},{number:10},{number:11},{number:12},{number:13},{number:14},{number:15},{number:16},{number:17},{number:18}] },
+    { id: "ironheart", title: "Железное сердце", year: 2025, type: "series", director: "Сэм Бейли", duration: "6 серий", poster: "posters/ironheart.jpg", shortDesc: "Гений Рири Уильямс создаёт высокотехнологичную броню.", description: "Гений-подросток Рири Уильямс создаёт высокотехнологичную броню и становится новой Железной Сердцем.", tags: ["Рири Уильямс"], episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6}] },
+    { id: "yourfriendly", title: "Ваши дружелюбные соседи", year: 2025, type: "series", director: "Мэлхиор Цуй", duration: "8 серий", poster: "posters/yourfriendly.jpg", shortDesc: "Анимационная история о Питере Паркере и Нормане Озборне.", description: "Анимационный сериал об альтернативной версии Питера Паркера, которого тренирует не Тони Старк, а Норман Озборн.", tags: ["Питер Паркер", "Норман Озборн"], episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8}] }
   ]},
   "phase-6": { title: "Фаза 6", items: [
-    { id: "fantastic", title: "Фантастическая четвёрка: Первые шаги", year: 2025, type: "film", description: "Семья супергероев.", tags: ["Мистер Фантастик", "Невидимая Леди"] },
-    { id: "avengers5", title: "Мстители: Судный день", year: 2026, type: "film", description: "Новая команда Мстителей.", tags: ["Доктор Дум", "Все герои"] },
-    { id: "avengers6", title: "Мстители: Секретные войны", year: 2027, type: "film", description: "Финальная битва мультивселенных.", tags: ["Финал", "Все герои"] },
-    { id: "vision", title: "Вижн", year: 2026, type: "series", episodes: [{number:1},{number:2},{number:3},{number:4},{number:5},{number:6},{number:7},{number:8}], description: "Белый Вижн ищет себя.", tags: ["Вижен", "Ванда"] },
-    { id: "zombie", title: "Marvel Zombies", year: 2025, type: "series", episodes: [{number:1},{number:2},{number:3},{number:4}], description: "Зомби-апокалипсис в MCU.", tags: ["Зомби", "Выжившие герои"] }
+    { id: "fantastic", title: "Фантастическая четвёрка: Первые шаги", year: 2025, type: "film", director: "Мэтт Шэкман", duration: "—", poster: "posters/fantastic.jpg", shortDesc: "Семья исследователей получает космические силы и становится героями.", description: "Рид Ричардс, Сью Сторм, Бен Гримм и Джонни Шторм — семья исследователей с космическими силами.", tags: ["Мистер Фантастик", "Невидимая Леди"] },
+    { id: "zombie", title: "Marvel Zombies", year: 2025, type: "series", director: "Брайан Andrews", duration: "4 серии", poster: "posters/zombie.jpg", shortDesc: "Герои MCU пытаются выжить в мире, захваченном зомби.", description: "Анимационный спин-офф «Что, если...?». Зомби-апокалипсис в MCU.", tags: ["Зомби", "Выжившие герои"], episodes: [{number:1},{number:2},{number:3},{number:4}] }
   ]}
 };
 
-function loadWatched() { const r = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); watched = r.watched || {}; watchedEpisodes = r.episodes || {}; }
-function saveWatched() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ watched, episodes: watchedEpisodes })); }
+const otherMarvelData = {
+  "spider": { title: "Человек-паук", items: [
+    { id: "spider2002", title: "Человек-паук", year: 2002, type: "film", director: "Сэм Рэйми", duration: "121 мин", poster: "posters/spider2002.jpg", shortDesc: "Питер Паркер получает сверхспособности после укуса радиоактивного паука.", description: "Питер Паркер — застенчивый школьник, который после укуса радиоактивного паука получает сверхспособности.", tags: ["Тоби Магуайр", "Зелёный Гоблин"] },
+    { id: "spider2004", title: "Человек-паук 2", year: 2004, type: "film", director: "Сэм Рэйми", duration: "127 мин", poster: "posters/spider2004.jpg", shortDesc: "Питер Паркер теряет силы и сталкивается с Доктором Осьминогом.", description: "Питер пытается совместить личную жизнь и обязанности супергероя.", tags: ["Тоби Магуайр", "Док Ок"] },
+    { id: "spider2007", title: "Человек-паук 3: Враг в отражении", year: 2007, type: "film", director: "Сэм Рэйми", duration: "139 мин", poster: "posters/spider2007.jpg", shortDesc: "Питер борется с чёрным костюмом и сразу с тремя злодеями.", description: "Питер попадает под влияние чёрного костюма симбиота.", tags: ["Тоби Магуайр", "Веном"] },
+    { id: "amazingspider2012", title: "Новый Человек-паук", year: 2012, type: "film", director: "Марк Уэбб", duration: "136 мин", poster: "posters/amazingspider2012.jpg", shortDesc: "Эндрю Гарфилд в роли Питера Паркера, раскрывающего тайну родителей.", description: "Питер Паркер в исполнении Эндрю Гарфилда раскрывает тайну исчезновения своих родителей.", tags: ["Эндрю Гарфилд", "Ящер"] },
+    { id: "amazingspider2014", title: "Новый Человек-паук 2: Высокое напряжение", year: 2014, type: "film", director: "Марк Уэбб", duration: "142 мин", poster: "posters/amazingspider2014.jpg", shortDesc: "Питер сражается с Электро и Зелёным Гоблином.", description: "Питер Паркер сталкивается с Максом Диллоном, который превращается в Электро.", tags: ["Эндрю Гарфилд", "Электро"] },
+    { id: "spiderverse2018", title: "Человек-паук: Через вселенные", year: 2018, type: "film", director: "Боб Персичетти", duration: "117 мин", poster: "posters/spiderverse2018.jpg", shortDesc: "Майлз Моралес становится Человеком-пауком в мультивселенной.", description: "Подросток Майлз Моралес становится новым Человеком-пауком и встречает альтернативные версии героя из других вселенных.", tags: ["Майлз Моралес", "Анимация"] },
+    { id: "spiderverse2023", title: "Человек-паук: Паутина вселенных", year: 2023, type: "film", director: "Хоаким Дос Сантос", duration: "140 мин", poster: "posters/spiderverse2023.jpg", shortDesc: "Майлз путешествует по мультивселенной и встречает Паучий отряд.", description: "Майлз Моралес отправляется в эпическое приключение по мультивселенной вместе с Гвен Стейси.", tags: ["Майлз Моралес", "Гвен Стейси"] }
+  ]},
+  "xmen": { title: "Люди Икс", items: [
+    { id: "xmen2000", title: "Люди Икс", year: 2000, type: "film", director: "Брайан Сингер", duration: "104 мин", poster: "posters/xmen2000.jpg", shortDesc: "Профессор Икс собирает команду мутантов для борьбы с Магнето.", description: "Профессор Чарльз Ксавьер собирает команду мутантов-Людей Икс, чтобы остановить Магнето.", tags: ["Хью Джекман", "Патрик Стюарт"] },
+    { id: "xmen2003", title: "Люди Икс 2", year: 2003, type: "film", director: "Брайан Сингер", duration: "134 мин", poster: "posters/xmen2003.jpg", shortDesc: "Люди Икс объединяются с Магнето против общего врага.", description: "Полковник Страйкер атакует школу профессора Икс.", tags: ["Хью Джекман", "Ночной Змей"] },
+    { id: "xmen2006", title: "Люди Икс: Последняя битва", year: 2006, type: "film", director: "Бретт Рэтнер", duration: "104 мин", poster: "posters/xmen2006.jpg", shortDesc: "Мутанты сражаются против лекарства от мутаций.", description: "Компания разрабатывает лекарство от мутаций. Магнето собирает армию мутантов.", tags: ["Хью Джекман", "Феникс"] },
+    { id: "xmenorigins2009", title: "Люди Икс: Начало. Росомаха", year: 2009, type: "film", director: "Гэвин Худ", duration: "107 мин", poster: "posters/xmenorigins2009.jpg", shortDesc: "История происхождения Росомахи и эксперимента Оружие Икс.", description: "Джеймс Хоулетт и его сводный брат Виктор Крид проходят через войны. Джеймс подвергается эксперименту Оружие Икс и получает адамантиевый скелет.", tags: ["Хью Джекман", "Виктор Крид"] },
+    { id: "xmenfirstclass2011", title: "Люди Икс: Первый класс", year: 2011, type: "film", director: "Мэттью Вон", duration: "131 мин", poster: "posters/xmenfirstclass2011.jpg", shortDesc: "Молодой профессор Икс и Магнето создают команду Людей Икс.", description: "В 1960-х годах молодой Чарльз Ксавьер и Эрик Леншерр объединяются.", tags: ["Джеймс Макэвой", "Майкл Фассбендер"] },
+    { id: "wolverine2013", title: "Росомаха: Бессмертный", year: 2013, type: "film", director: "Джеймс Мэнголд", duration: "126 мин", poster: "posters/wolverine2013.jpg", shortDesc: "Логан отправляется в Японию и теряет свои силы.", description: "Логан отправляется в Японию, где встречает старого знакомого. Он теряет свои регенеративные способности и должен сразиться с Серебряным Самураем.", tags: ["Хью Джекман", "Япония"] },
+    { id: "xmen2014", title: "Люди Икс: Дни минувшего будущего", year: 2014, type: "film", director: "Брайан Сингер", duration: "132 мин", poster: "posters/xmen2014.jpg", shortDesc: "Росомаха путешествует во времени, чтобы изменить прошлое.", description: "В постапокалиптическом будущем Росомаха отправляется в прошлое.", tags: ["Хью Джекман", "Питер Динклэйдж"] },
+    { id: "xmen2016", title: "Люди Икс: Апокалипсис", year: 2016, type: "film", director: "Брайан Сингер", duration: "144 мин", poster: "posters/xmen2016.jpg", shortDesc: "Древний мутант Апокалипсис хочет уничтожить мир.", description: "Эн Сабах Нур (Апокалипсис), первый и сильнейший мутант, просыпается в современном мире.", tags: ["Джеймс Макэвой", "Оскар Айзек"] },
+    { id: "logan2017", title: "Логан", year: 2017, type: "film", director: "Джеймс Мэнголд", duration: "137 мин", poster: "posters/logan2017.jpg", shortDesc: "Старый Логан защищает юную мутантку Лору в постапокалиптическом мире.", description: "В 2029 году Логан стареет и теряет силы. Он вынужден защитить юную мутантку Лору.", tags: ["Хью Джекман", "Патрик Стюарт"] },
+    { id: "darkphoenix2019", title: "Люди Икс: Тёмный Феникс", year: 2019, type: "film", director: "Саймон Кинберг", duration: "113 мин", poster: "posters/darkphoenix2019.jpg", shortDesc: "Джин Грей получает космическую силу и становится Тёмным Фениксом.", description: "Во время спасательной миссии в космосе Джин Грей получает мощнейшую космическую силу.", tags: ["Софи Тёрнер", "Джессика Честейн"] },
+    { id: "newmutants2020", title: "Новые мутанты", year: 2020, type: "film", director: "Джош Бун", duration: "94 мин", poster: "posters/newmutants2020.jpg", shortDesc: "Пять юных мутантов содержатся в секретной больнице.", description: "Пять молодых мутантов содержатся в секретной больнице против их воли.", tags: ["Аня Тейлор-Джой", "Мэйси Уильямс"] }
+  ]},
+  "deadpool": { title: "Дэдпул", items: [
+    { id: "deadpool2016", title: "Дэдпул", year: 2016, type: "film", director: "Тим Миллер", duration: "108 мин", poster: "posters/deadpool2016.jpg", shortDesc: "Уэйд Уилсон получает силы и становится болтливым наёмником.", description: "Уэйд Уилсон, бывший спецназовец, проходит эксперимент, который даёт ему регенерацию, но уродует его лицо.", tags: ["Райан Рейнольдс", "Ванесса"] },
+    { id: "deadpool2018", title: "Дэдпул 2", year: 2018, type: "film", director: "Дэвид Литч", duration: "119 мин", poster: "posters/deadpool2018.jpg", shortDesc: "Дэдпул создаёт команду Икс-Силы для защиты юного мутанта.", description: "Дэдпул создаёт команду Икс-Силы, чтобы защитить юного мутанта Рассела от Кейбла.", tags: ["Райан Рейнольдс", "Джош Бролин"] }
+  ]},
+  "fantastic": { title: "Фантастическая четвёрка", items: [
+    { id: "ff2005", title: "Фантастическая четвёрка", year: 2005, type: "film", director: "Тим Стори", duration: "106 мин", poster: "posters/ff2005.jpg", shortDesc: "Четверо астронавтов получают суперсилы после космической бури.", description: "Рид Ричардс, Сью Шторм, Джонни Шторм и Бен Гримм получают суперспособности.", tags: ["Йоан Гриффит", "Джессика Альба"] },
+    { id: "ff2007", title: "Фантастическая четвёрка 2: Вторжение Серебряного сёрфера", year: 2007, type: "film", director: "Тим Стори", duration: "92 мин", poster: "posters/ff2007.jpg", shortDesc: "Фантастическая четвёрка сражается с Серебряным сёрфером и Доктором Думом.", description: "На Землю прибывает Серебряный сёрфер, вестник Галактуса.", tags: ["Йоан Гриффит", "Джулиан Макмэхон"] },
+    { id: "ff2015", title: "Фантастическая четвёрка", year: 2015, type: "film", director: "Джош Транк", duration: "100 мин", poster: "posters/ff2015.jpg", shortDesc: "Перезапуск истории Фантастической четвёрки.", description: "Четверо молодых астронавтов телепортируются в опасную вселенную.", tags: ["Майлз Теллер", "Кейт Мара"] }
+  ]},
+  "venom": { title: "Веном", items: [
+    { id: "venom2018", title: "Веном", year: 2018, type: "film", director: "Рубен Флейшер", duration: "112 мин", poster: "posters/venom2018.jpg", shortDesc: "Эдди Брок сливается с инопланетным симбиотом Веномом.", description: "Журналист Эдди Брок пытается разрушить корпорацию Life Foundation, но сливается с инопланетным симбиотом Веномом.", tags: ["Том Харди", "Мишель Уильямс"] },
+    { id: "venom2021", title: "Веном 2: Карнаж", year: 2021, type: "film", director: "Энди Серкис", duration: "97 мин", poster: "posters/venom2021.jpg", shortDesc: "Веном сражается с ещё более опасным симбиотом Карнажем.", description: "Эдди Брок и Веном сталкиваются с серийным убийцей Клетусом Кэссиди, который становится носителем симбиота Карнажа.", tags: ["Том Харди", "Вуди Харрельсон"] },
+    { id: "venom2024", title: "Веном: Последний танец", year: 2024, type: "film", director: "Келли Марсель", duration: "109 мин", poster: "posters/venom2024.jpg", shortDesc: "Эдди и Веном сталкиваются с последней угрозой.", description: "Эдди Брок и Веном сталкиваются с последней и самой опасной угрозой в своей финальной главе.", tags: ["Том Харди", "Джуно Темпл"] }
+  ]},
+  "blade": { title: "Блейд", items: [
+    { id: "blade1998", title: "Блейд", year: 1998, type: "film", director: "Стивен Норрингтон", duration: "120 мин", poster: "posters/blade1998.jpg", shortDesc: "Полукровка-вампир охотится на вампиров.", description: "Эрик Брукс (Блейд) — полукровка, рождённый от укуса вампира. Он охотится на вампиров.", tags: ["Уэсли Снайпс", "Стивен Дорфф"] },
+    { id: "blade2002", title: "Блейд 2", year: 2002, type: "film", director: "Гильермо дель Торо", duration: "117 мин", poster: "posters/blade2002.jpg", shortDesc: "Блейд сражается с древней расой вампиров-жнецов.", description: "Блейд объединяется с Гуманностью, чтобы остановить Древних.", tags: ["Уэсли Снайпс", "Рон Перлман"] },
+    { id: "blade2004", title: "Блейд: Троица", year: 2004, type: "film", director: "Дэвид С. Гойер", duration: "113 мин", poster: "posters/blade2004.jpg", shortDesc: "Блейд борется с зависимостью и новым врагом Дрейком.", description: "Блейд заражается вирусом, превращающим его в вампира. Он должен сразиться с Дрейком.", tags: ["Уэсли Снайпс", "Райан Рейнольдс"] }
+  ]},
+  "ghost": { title: "Призрачный гонщик", items: [
+    { id: "ghost2007", title: "Призрачный гонщик", year: 2007, type: "film", director: "Марк Стивен Джонсон", duration: "114 мин", poster: "posters/ghost2007.jpg", shortDesc: "Каскадёр Джонни Блейз продаёт душу дьяволу и становится Призрачным гонщиком.", description: "Каскадёр Джонни Блейз продаёт душу Мефистофелю, чтобы спасти отца.", tags: ["Николас Кейдж", "Ева Мендес"] },
+    { id: "ghost2012", title: "Призрачный гонщик 2", year: 2012, type: "film", director: "Марк Невелдайн", duration: "95 мин", poster: "posters/ghost2012.jpg", shortDesc: "Джонни Блейз учится контролировать силу Призрачного гонщика.", description: "Джонни Блейз скрывается в Восточной Европе. Он должен защитить мальчика от демона Роурка.", tags: ["Николас Кейдж", "Идрис Эльба"] }
+  ]},
+  "other": { title: "Другие фильмы Marvel", items: [
+    { id: "daredevil2003", title: "Сорвиголова", year: 2003, type: "film", director: "Марк Стивен Джонсон", duration: "103 мин", poster: "posters/daredevil2003.jpg", shortDesc: "Слепой адвокат Мэтт Мёрдок становится супергероем Сорвиголовой.", description: "Мэтт Мёрдок ослеп в детстве, но получил обострённые чувства. Днём он адвокат, ночью — супергерой.", tags: ["Бен Аффлек", "Дженнифер Гарнер"] },
+    { id: "elektra2005", title: "Электра", year: 2005, type: "film", director: "Роб Боуман", duration: "97 мин", poster: "posters/elektra2005.jpg", shortDesc: "Электра воскрешена и становится наёмной убийцей.", description: "Электра Некос воскрешена организацией Чистилище и становится наёмной убийцей.", tags: ["Дженнифер Гарнер", "Горан Вишнич"] },
+    { id: "punisher2004", title: "Каратель", year: 2004, type: "film", director: "Джонатан Хенсли", duration: "124 мин", poster: "posters/punisher2004.jpg", shortDesc: "Фрэнк Касл мстит мафии за смерть семьи.", description: "Фрэнк Касл, бывший агент ФБР, теряет всю семью из-за мафиози.", tags: ["Томас Джейн", "Джон Траволта"] },
+    { id: "punisher2008", title: "Каратель: Территория войны", year: 2008, type: "film", director: "Лекси Александер", duration: "103 мин", poster: "posters/punisher2008.jpg", shortDesc: "Каратель против русской мафии в Нью-Йорке.", description: "Фрэнк Касл возвращается, чтобы остановить русского мафиози Йови.", tags: ["Рэй Стивенсон", "Доминик Уэст"] }
+  ]}
+};
+
+// Только действительно будущие релизы (на июль 2026)
+const upcomingData = [
+  { id: "upcoming1", title: "Мстители: Судный день", year: 2026, type: "film", poster: "posters/avengers5.jpg", description: "Новая команда Мстителей против Доктора Дума. Эпическое противостояние с возвращением старых героев.", tags: ["MCU", "Фаза 6"] },
+  { id: "upcoming2", title: "Мстители: Секретные войны", year: 2027, type: "film", poster: "posters/avengers6.jpg", description: "Финальная битва мультивселенных. Кульминация Саги Мультивселенной.", tags: ["MCU", "Фаза 6"] },
+  { id: "upcoming3", title: "Блейд", year: null, type: "film", poster: "posters/blade-new.jpg", description: "Охотник на вампиров возвращается в MCU. Дата выхода не объявлена.", tags: ["MCU", "В разработке"] },
+  { id: "upcoming4", title: "Шан-Чи 2", year: null, type: "film", poster: "posters/shangchi2.jpg", description: "Продолжение истории Шан-Чи. Дата выхода не объявлена.", tags: ["MCU", "В разработке"] },
+  { id: "upcoming5", title: "Новый Человек-паук", year: null, type: "film", poster: "posters/new-spiderman.jpg", description: "Новый фильм о Человеке-пауке от Marvel Studios. Дата выхода не объявлена.", tags: ["MCU", "В разработке"] },
+  { id: "upcoming6", title: "Новые Люди Икс", year: null, type: "film", poster: "posters/new-xmen.jpg", description: "Перезапуск Людей Икс в MCU. Дата выхода не объявлена.", tags: ["MCU", "В разработке"] },
+  { id: "upcoming7", title: "Дэдпул 3", year: null, type: "film", poster: "posters/deadpool3.jpg", description: "Новое приключение Дэдпула. Дата выхода не объявлена.", tags: ["Другие Marvel", "В разработке"] }
+];
+
+function loadWatched() { 
+  const r = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); 
+  watched = r.mcu || {}; 
+  watchedOther = r.other || {}; 
+  watchedEpisodes = r.episodes || {};
+  watchedEpisodesOther = r.episodesOther || {};
+}
+function saveWatched() { 
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ mcu: watched, other: watchedOther, episodes: watchedEpisodes, episodesOther: watchedEpisodesOther })); 
+}
 loadWatched();
 
-function navigate(page) { window.location.hash = page === "home" ? "" : page; }
+function navigate(page) { 
+  window.location.hash = page === "home" ? "" : page; 
+}
+
 function applyRoute() {
   const hash = window.location.hash.replace("#", "") || "home";
-  const valid = ["home", "checklist", "profile"];
+  const valid = ["home", "mcu", "other", "upcoming", "profile"];
   const page = valid.includes(hash) ? hash : "home";
+  
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById("page-" + page).classList.add("active");
   document.querySelectorAll(".nav-link").forEach(l => l.classList.toggle("active", l.dataset.page === page));
-  if (page === "checklist") renderChecklist();
+  
+  if (page === "mcu") { 
+    window.currentFilter = "all"; 
+    renderChecklist(mcuData, "mainContent", "progressFill", "progressPercent", "progressCount", "filters", "searchInput", watched, watchedEpisodes, "mcu"); 
+  }
+  if (page === "other") { 
+    window.currentFilterOther = "all"; 
+    renderChecklist(otherMarvelData, "mainContentOther", "progressFillOther", "progressPercentOther", "progressCountOther", "filtersOther", "searchInputOther", watchedOther, watchedEpisodesOther, "other"); 
+  }
+  if (page === "upcoming") renderUpcoming();
   if (page === "profile") renderProfile();
   if (page === "home") renderHomeStats();
+  
   window.scrollTo(0, 0);
 }
+
 window.addEventListener("hashchange", applyRoute);
 
 function renderHomeStats() {
-  let t = 0, f = 0, s = 0;
-  for (const k in mcuData) mcuData[k].items.forEach(i => { t++; i.type === "film" ? f++ : s++; });
-  document.getElementById("statTotal").textContent = t;
-  document.getElementById("statFilms").textContent = f;
-  document.getElementById("statSeries").textContent = s;
+  let total = 0, films = 0, series = 0;
+  for (const k in mcuData) mcuData[k].items.forEach(i => { total++; if (i.type === "film") films++; else series++; });
+  for (const k in otherMarvelData) otherMarvelData[k].items.forEach(i => { total++; films++; });
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statFilms").textContent = films;
+  document.getElementById("statSeries").textContent = series;
 }
 
-function renderPoster(item) {
-  const local = `posters/${item.id}.jpg`, localPng = `posters/${item.id}.png`, ext = item.poster || null;
-  const errHtml = `<div class='poster-placeholder'><div class='poster-icon'>🎬</div><div class='poster-text'>Постер будет добавлен<br><br>${item.title}<br>${item.year}</div></div>`;
-  if (ext) return `<div class="poster-box"><img src="${ext}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='${local}';this.addEventListener('error',function(){this.parentElement.innerHTML='${errHtml}';})"></div>`;
-  return `<div class="poster-box"><img src="${local}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='${localPng}';this.addEventListener('error',function(){this.parentElement.innerHTML='${errHtml}';})"></div>`;
+function renderUpcoming() {
+  const grid = document.getElementById("upcomingGrid");
+  grid.innerHTML = "";
+  
+  upcomingData.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "upcoming-card";
+    
+    const yearDisplay = item.year ? item.year : "Дата не известна";
+    const yearClass = item.year ? "" : "unknown";
+    const posterUrl = item.poster || `posters/${item.id}.jpg`;
+    
+    card.innerHTML = `
+      <div class="upcoming-poster">
+        <img src="${posterUrl}" alt="${item.title}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'poster-placeholder\\'><div class=\\'poster-icon\\'>🎬</div><div class=\\'poster-text\\'>Постер будет добавлен<br><br>${item.title}</div></div>'">
+      </div>
+      <div class="upcoming-content">
+        <div class="upcoming-year ${yearClass}">${yearDisplay}</div>
+        <h3 class="upcoming-card-title">${item.title}</h3>
+        <p class="upcoming-card-desc">${item.description}</p>
+        <div class="upcoming-card-meta">
+          ${item.tags.map(tag => `<span class="info-tag">${tag}</span>`).join('')}
+        </div>
+      </div>
+    `;
+    
+    grid.appendChild(card);
+  });
 }
 
-function getReleaseStatus(year) { return year > CURRENT_YEAR ? `<div class="release-status">Ещё не вышел · ${year}</div>` : ''; }
+function getReleaseStatus(year) { return year > CURRENT_YEAR ? `<div class="release-status"> Ещё не вышел · ${year}</div>` : ''; }
 function getTypeLabel(t) { return t === 'film' ? 'Фильм' : t === 'series' ? 'Сериал' : 'Спецвыпуск'; }
 function getTypeClass(t) { return t === 'film' ? 'type-film' : t === 'series' ? 'type-series' : 'type-special'; }
 
-function renderEpisodes(seriesId, episodes) {
+function renderEpisodes(seriesId, episodes, watchedEp) {
   if (!episodes || !episodes.length) return '';
-  const sw = watchedEpisodes[seriesId] || {};
+  const sw = watchedEp[seriesId] || {};
   const wc = Object.keys(sw).filter(k => sw[k]).length;
   let html = `<div class="episodes-section"><div class="episodes-title">Серии (${wc}/${episodes.length})</div>`;
   episodes.forEach(ep => {
     const key = `${seriesId}_ep${ep.number}`, isW = sw[key] || false, title = ep.title || `Серия ${ep.number}`;
-    html += `<div class="episode-item ${isW ? 'watched' : ''}" onclick="toggleEpisode('${seriesId}',${ep.number})"><div class="episode-checkbox"></div><div class="episode-info"><div class="episode-number">Серия ${ep.number}</div><div class="episode-title">${title}</div></div></div>`;
+    html += `<div class="episode-item ${isW ? 'watched' : ''}" onclick="toggleEpisode('${seriesId}',${ep.number},'${Object.keys(mcuData).some(k=>mcuData[k].items.some(i=>i.id===seriesId))?'mcu':'other'}')"><div class="episode-checkbox"></div><div class="episode-info"><div class="episode-number">Серия ${ep.number}</div><div class="episode-title">${title}</div></div></div>`;
   });
   return html + '</div>';
 }
 
-function renderChecklist() {
-  const main = document.getElementById("mainContent");
+function renderChecklist(data, mainId, progressFillId, progressPercentId, progressCountId, filtersId, searchInputId, watchedObj, watchedEp, type) {
+  const main = document.getElementById(mainId);
   main.innerHTML = "";
-  let anyVisible = false;
+  let anyVisible = false, total = 0, done = 0;
 
-  for (const phaseKey in mcuData) {
-    const phase = mcuData[phaseKey];
+  const currentFilter = type === "mcu" ? window.currentFilter : window.currentFilterOther;
+  const currentSearch = type === "mcu" ? window.currentSearch : window.currentSearchOther;
+
+  for (const categoryKey in data) {
+    const category = data[categoryKey];
     const section = document.createElement("section");
     section.className = "phase-section";
-    section.dataset.phase = phaseKey;
-    if (currentFilter.startsWith("phase-") && currentFilter !== phaseKey) section.style.display = "none";
+    section.dataset.phase = categoryKey;
+    
+    if (currentFilter !== "all" && currentFilter !== categoryKey) {
+      if (currentFilter !== "film" && currentFilter !== "series" && currentFilter !== "special") {
+        section.style.display = "none";
+      }
+    }
 
     const title = document.createElement("h2");
     title.className = "phase-title";
-    const pw = phase.items.filter(i => watched[i.id]).length;
-    title.innerHTML = `<span class="phase-badge">${phase.title}</span><span>Киновселенная Marvel</span><span class="phase-progress">${pw} / ${phase.items.length}</span>`;
+    const catItems = category.items;
+    const catWatched = catItems.filter(i => watchedObj[i.id]).length;
+    const allCatWatched = catWatched === catItems.length && catItems.length > 0;
+    
+    title.innerHTML = `
+      <div class="phase-checkbox ${allCatWatched ? 'checked' : ''}" data-category="${categoryKey}" data-type="${type}"></div>
+      <span class="phase-badge">${category.title}</span>
+      <span>Marvel</span>
+      <span class="phase-progress">${catWatched} / ${catItems.length}</span>
+    `;
     section.appendChild(title);
 
     const grid = document.createElement("div");
     grid.className = "items-grid";
 
-    // 🔥 ГАРАНТИРОВАННАЯ СОРТИРОВКА ПО ХРОНОЛОГИИ (ГОДУ ВЫХОДА)
-    const items = [...phase.items].sort((a, b) => a.year - b.year);
+    const items = [...catItems].sort((a, b) => a.year - b.year);
 
     items.forEach(item => {
-      if ((currentFilter === "film" || currentFilter === "series") && item.type !== currentFilter) return;
+      if (currentFilter === "film" && item.type !== "film") return;
+      if (currentFilter === "series" && item.type !== "series") return;
+      if (currentFilter === "special" && item.type !== "special") return;
       if (currentSearch && !item.title.toLowerCase().includes(currentSearch)) return;
+      
       anyVisible = true;
+      total++;
+      if (watchedObj[item.id]) done++;
 
       const card = document.createElement("div");
-      const isExp = expandedId === item.id;
-      card.className = "item-card" + (watched[item.id] ? " done" : "") + (isExp ? " expanded" : "");
+      const isExp = window.expandedId === item.id;
+      card.className = "item-card" + (watchedObj[item.id] ? " done" : "") + (isExp ? " expanded" : "");
       card.dataset.id = item.id;
       
+      const posterUrl = item.poster || `posters/${item.id}.jpg`;
+      const posterErr = `this.onerror=null; this.src='posters/${item.id}.png'; this.addEventListener('error', function(){ this.style.display='none'; this.parentElement.innerHTML='<div class=\\'poster-placeholder\\'><div class=\\'poster-icon\\'>🎬</div><div class=\\'poster-text\\'>Постер<br>${item.year}</div></div>'; })`;
+
       card.innerHTML = `
-        <div class="item-header">
-          <div class="checkbox" data-action="toggle-watch"></div>
-          <div class="item-info">
-            <div class="item-title">${item.title}</div>
-            <div class="item-meta">
-              <span class="item-type ${getTypeClass(item.type)}">${getTypeLabel(item.type)}</span>
-              <span>${item.year}</span>
-            </div>
-            ${getReleaseStatus(item.year)}
+        <div class="card-inner">
+          <div class="card-poster">
+            <img src="${posterUrl}" alt="${item.title}" loading="lazy" onerror="${posterErr}">
           </div>
-          <div class="expand-indicator">▼</div>
-        </div>
-        <div class="item-details">
-          <div class="item-details-inner">
-            ${renderPoster(item)}
-            <div class="info-block">
-              <div class="info-title">${item.title}</div>
-              <div class="info-meta">
-                <div class="info-meta-item">📅 <strong>${item.year}</strong></div>
-                <div class="info-meta-item">🎬 <strong>${item.director || '—'}</strong></div>
-                <div class="info-meta-item">⏱ <strong>${item.duration || '—'}</strong></div>
-                <div class="info-meta-item">📂 <strong>${phase.title}</strong></div>
+          <div class="card-content">
+            <div class="card-header-row">
+              <div class="checkbox" data-action="toggle-watch"></div>
+              <div class="item-info">
+                <div class="item-title">${item.title}</div>
+                <div class="item-meta">
+                  <span class="item-type ${getTypeClass(item.type)}">${getTypeLabel(item.type)}</span>
+                  <span>${item.year}</span>
+                </div>
+                <div class="short-desc">${item.shortDesc || item.description}</div>
+                ${getReleaseStatus(item.year)}
               </div>
-              <div class="info-description">${item.description}</div>
-              <div class="info-tags">${(item.tags || []).map(t => `<span class="info-tag">#${t}</span>`).join('')}</div>
-              ${item.type === 'series' && item.episodes ? renderEpisodes(item.id, item.episodes) : ''}
+              <div class="expand-indicator">▼</div>
+            </div>
+            <div class="item-details">
+              <div class="info-block">
+                <div class="info-meta">
+                  <div class="info-meta-item">🎬 <strong>${item.director || '—'}</strong></div>
+                  <div class="info-meta-item">⏱ <strong>${item.duration || '—'}</strong></div>
+                  <div class="info-meta-item"> <strong>${category.title}</strong></div>
+                </div>
+                <div class="info-description">${item.description}</div>
+                <div class="info-tags">${(item.tags || []).map(t => `<span class="info-tag">#${t}</span>`).join('')}</div>
+                ${item.type === 'series' && item.episodes ? renderEpisodes(item.id, item.episodes, watchedEp) : ''}
+              </div>
             </div>
           </div>
         </div>`;
       
-      card.querySelector('.checkbox').addEventListener('click', e => { e.stopPropagation(); toggleWatched(item.id); });
-      card.addEventListener('click', e => { if (!e.target.closest('.episode-item')) toggleExpand(item.id); });
+      card.querySelector('.checkbox').addEventListener('click', e => { 
+        e.stopPropagation(); 
+        if (watchedObj[item.id]) {
+          delete watchedObj[item.id];
+          if (item.type === 'series' && item.episodes) {
+            if (!watchedEp[item.id]) watchedEp[item.id] = {};
+            item.episodes.forEach(ep => {
+              delete watchedEp[item.id][`${item.id}_ep${ep.number}`];
+            });
+          }
+        } else {
+          watchedObj[item.id] = Date.now();
+          if (item.type === 'series' && item.episodes) {
+            if (!watchedEp[item.id]) watchedEp[item.id] = {};
+            item.episodes.forEach(ep => {
+              watchedEp[item.id][`${item.id}_ep${ep.number}`] = Date.now();
+            });
+          }
+        }
+        saveWatched(); 
+        renderChecklist(data, mainId, progressFillId, progressPercentId, progressCountId, filtersId, searchInputId, watchedObj, watchedEp, type); 
+      });
+      
+      card.addEventListener('click', e => { 
+        if (!e.target.closest('.checkbox') && !e.target.closest('.episode-item')) {
+          window.expandedId = window.expandedId === item.id ? null : item.id;
+          renderChecklist(data, mainId, progressFillId, progressPercentId, progressCountId, filtersId, searchInputId, watchedObj, watchedEp, type);
+        }
+      });
+      
       grid.appendChild(card);
     });
+    
     section.appendChild(grid);
     main.appendChild(section);
   }
+  
   if (!anyVisible) main.innerHTML = '<div class="no-results">🎬 Ничего не найдено. Попробуйте изменить запрос.</div>';
-  updateProgress();
-}
-
-function toggleExpand(id) {
-  expandedId = expandedId === id ? null : id;
-  renderChecklist();
-  if (expandedId) setTimeout(() => {
-    const card = document.querySelector(`.item-card[data-id="${expandedId}"]`);
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 100);
-}
-
-function toggleWatched(id) { watched[id] ? delete watched[id] : watched[id] = Date.now(); saveWatched(); renderChecklist(); }
-function toggleEpisode(sid, num) {
-  const key = `${sid}_ep${num}`;
-  if (!watchedEpisodes[sid]) watchedEpisodes[sid] = {};
-  watchedEpisodes[sid][key] ? delete watchedEpisodes[sid][key] : watchedEpisodes[sid][key] = Date.now();
-  saveWatched(); renderChecklist();
-}
-
-function updateProgress() {
-  let total = 0, done = 0, wl = [];
-  for (const pk in mcuData) {
-    mcuData[pk].items.forEach(item => {
-      if ((currentFilter === "film" || currentFilter === "series") && item.type !== currentFilter) return;
-      if (currentFilter.startsWith("phase-") && currentFilter !== pk) return;
-      if (currentSearch && !item.title.toLowerCase().includes(currentSearch)) return;
-      total++;
-      if (watched[item.id]) { done++; wl.push({ ...item, timestamp: watched[item.id] }); }
+  
+  const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById(progressPercentId).textContent = percent + "%";
+  document.getElementById(progressCountId).textContent = `${done} / ${total}`;
+  const fill = document.getElementById(progressFillId);
+  fill.innerHTML = "";
+  fill.style.height = percent + "%";
+  
+  if (done > 0) {
+    const watchedList = [];
+    for (const catKey in data) {
+      data[catKey].items.forEach(item => {
+        if (watchedObj[item.id]) watchedList.push({ ...item, timestamp: watchedObj[item.id] });
+      });
+    }
+    watchedList.sort((a, b) => a.timestamp - b.timestamp);
+    const segmentHeight = 100 / done;
+    watchedList.forEach(item => {
+      const segment = document.createElement("div");
+      segment.className = "progress-segment";
+      segment.style.height = segmentHeight + "%";
+      if (item.type === "film") segment.style.background = "var(--film-color)";
+      else if (item.type === "series") segment.style.background = "var(--series-color)";
+      else if (item.type === "special") segment.style.background = "var(--special-color)";
+      segment.title = item.title;
+      fill.appendChild(segment);
     });
   }
-  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-  document.getElementById("progressPercent").textContent = pct + "%";
-  document.getElementById("progressCount").textContent = `${done} / ${total}`;
-  const fill = document.getElementById("progressFill");
-  fill.innerHTML = ""; fill.style.height = pct + "%";
-  if (done > 0) {
-    wl.sort((a, b) => a.timestamp - b.timestamp);
-    const sh = 100 / done;
-    wl.forEach(item => {
-      const seg = document.createElement("div");
-      seg.className = "progress-segment";
-      seg.style.height = sh + "%";
-      seg.style.background = item.type === "film" ? "var(--film-color)" : "var(--series-color)";
-      seg.title = item.title;
-      fill.appendChild(seg);
+}
+
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('phase-checkbox')) {
+    const categoryKey = e.target.dataset.category;
+    const type = e.target.dataset.type;
+    const data = type === "mcu" ? mcuData : otherMarvelData;
+    const watchedObj = type === "mcu" ? watched : watchedOther;
+    const watchedEp = type === "mcu" ? watchedEpisodes : watchedEpisodesOther;
+    const category = data[categoryKey];
+    
+    const allWatched = category.items.every(i => watchedObj[i.id]);
+    
+    category.items.forEach(item => {
+      if (allWatched) {
+        delete watchedObj[item.id];
+        if (item.type === 'series' && item.episodes) {
+          if (!watchedEp[item.id]) watchedEp[item.id] = {};
+          item.episodes.forEach(ep => {
+            delete watchedEp[item.id][`${item.id}_ep${ep.number}`];
+          });
+        }
+      } else {
+        watchedObj[item.id] = Date.now();
+        if (item.type === 'series' && item.episodes) {
+          if (!watchedEp[item.id]) watchedEp[item.id] = {};
+          item.episodes.forEach(ep => {
+            watchedEp[item.id][`${item.id}_ep${ep.number}`] = Date.now();
+          });
+        }
+      }
     });
+    
+    saveWatched();
+    
+    if (type === "mcu") {
+      renderChecklist(mcuData, "mainContent", "progressFill", "progressPercent", "progressCount", "filters", "searchInput", watched, watchedEpisodes, "mcu");
+    } else {
+      renderChecklist(otherMarvelData, "mainContentOther", "progressFillOther", "progressPercentOther", "progressCountOther", "filtersOther", "searchInputOther", watchedOther, watchedEpisodesOther, "other");
+    }
+  }
+});
+
+function toggleEpisode(seriesId, episodeNumber, type) {
+  const watchedEp = type === "mcu" ? watchedEpisodes : watchedEpisodesOther;
+  const key = `${seriesId}_ep${episodeNumber}`;
+  if (!watchedEp[seriesId]) watchedEp[seriesId] = {};
+  watchedEp[seriesId][key] ? delete watchedEp[seriesId][key] : watchedEp[seriesId][key] = Date.now();
+  saveWatched();
+  
+  if (type === "mcu") {
+    renderChecklist(mcuData, "mainContent", "progressFill", "progressPercent", "progressCount", "filters", "searchInput", watched, watchedEpisodes, "mcu");
+  } else {
+    renderChecklist(otherMarvelData, "mainContentOther", "progressFillOther", "progressPercentOther", "progressCountOther", "filtersOther", "searchInputOther", watchedOther, watchedEpisodesOther, "other");
   }
 }
 
 document.getElementById("filters").addEventListener("click", e => {
   if (e.target.classList.contains("filter-btn")) {
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll("#filters .filter-btn").forEach(b => b.classList.remove("active"));
     e.target.classList.add("active");
-    currentFilter = e.target.dataset.filter;
-    expandedId = null;
-    renderChecklist();
+    window.currentFilter = e.target.dataset.filter;
+    window.expandedId = null;
+    renderChecklist(mcuData, "mainContent", "progressFill", "progressPercent", "progressCount", "filters", "searchInput", watched, watchedEpisodes, "mcu");
   }
 });
-document.getElementById("searchInput").addEventListener("input", e => { currentSearch = e.target.value.trim().toLowerCase(); expandedId = null; renderChecklist(); });
 
-function getAllItems() { const all = []; for (const k in mcuData) mcuData[k].items.forEach(i => all.push({ ...i, phase: k })); return all; }
+document.getElementById("filtersOther").addEventListener("click", e => {
+  if (e.target.classList.contains("filter-btn")) {
+    document.querySelectorAll("#filtersOther .filter-btn").forEach(b => b.classList.remove("active"));
+    e.target.classList.add("active");
+    window.currentFilterOther = e.target.dataset.filter;
+    window.expandedId = null;
+    renderChecklist(otherMarvelData, "mainContentOther", "progressFillOther", "progressPercentOther", "progressCountOther", "filtersOther", "searchInputOther", watchedOther, watchedEpisodesOther, "other");
+  }
+});
+
+document.getElementById("searchInput").addEventListener("input", e => { 
+  window.currentSearch = e.target.value.trim().toLowerCase(); 
+  window.expandedId = null; 
+  renderChecklist(mcuData, "mainContent", "progressFill", "progressPercent", "progressCount", "filters", "searchInput", watched, watchedEpisodes, "mcu"); 
+});
+
+document.getElementById("searchInputOther").addEventListener("input", e => { 
+  window.currentSearchOther = e.target.value.trim().toLowerCase(); 
+  window.expandedId = null; 
+  renderChecklist(otherMarvelData, "mainContentOther", "progressFillOther", "progressPercentOther", "progressCountOther", "filtersOther", "searchInputOther", watchedOther, watchedEpisodesOther, "other"); 
+});
+
+function getAllItems() { 
+  const all = []; 
+  for (const k in mcuData) mcuData[k].items.forEach(i => all.push({ ...i, phase: k, source: "mcu" })); 
+  for (const k in otherMarvelData) otherMarvelData[k].items.forEach(i => all.push({ ...i, phase: k, source: "other" })); 
+  return all; 
+}
+
 function formatDate(ts) {
   const d = new Date(ts), m = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"], now = new Date();
   const diff = Math.floor((now - d) / 86400000);
@@ -532,12 +842,26 @@ function formatDate(ts) {
 }
 
 function renderProfile() {
-  const all = getAllItems(), total = all.length, wi = all.filter(i => watched[i.id]), done = wi.length;
-  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const mcuAll = [];
+  for (const k in mcuData) mcuData[k].items.forEach(i => mcuAll.push({ ...i, phase: k }));
+  const mcuTotal = mcuAll.length;
+  const mcuWatched = mcuAll.filter(i => watched[i.id]);
+  const mcuDone = mcuWatched.length;
+  const mcuPct = mcuTotal > 0 ? Math.round((mcuDone / mcuTotal) * 100) : 0;
   const circ = 2 * Math.PI * 88;
-  document.getElementById("circleFg").setAttribute("stroke-dashoffset", circ - (pct / 100) * circ);
-  document.getElementById("circlePercent").textContent = pct + "%";
-  document.getElementById("profileCount").textContent = `${done} из ${total}`;
+  document.getElementById("circleFg").setAttribute("stroke-dashoffset", circ - (mcuPct / 100) * circ);
+  document.getElementById("circlePercent").textContent = mcuPct + "%";
+  document.getElementById("profileCount").textContent = `${mcuDone} из ${mcuTotal}`;
+
+  const otherAll = [];
+  for (const k in otherMarvelData) otherMarvelData[k].items.forEach(i => otherAll.push({ ...i, phase: k }));
+  const otherTotal = otherAll.length;
+  const otherWatched = otherAll.filter(i => watchedOther[i.id]);
+  const otherDone = otherWatched.length;
+  const otherPct = otherTotal > 0 ? Math.round((otherDone / otherTotal) * 100) : 0;
+  document.getElementById("circleFgOther").setAttribute("stroke-dashoffset", circ - (otherPct / 100) * circ);
+  document.getElementById("circlePercentOther").textContent = otherPct + "%";
+  document.getElementById("profileCountOther").textContent = `${otherDone} из ${otherTotal}`;
 
   const ps = document.getElementById("phaseStats"); ps.innerHTML = "";
   for (const k in mcuData) {
@@ -549,14 +873,30 @@ function renderProfile() {
     requestAnimationFrame(() => { row.querySelector(".phase-stat-fill").style.width = pP + "%"; });
   }
 
+  const cs = document.getElementById("categoryStats"); cs.innerHTML = "";
+  for (const k in otherMarvelData) {
+    const cat = otherMarvelData[k], cT = cat.items.length, cD = cat.items.filter(i => watchedOther[i.id]).length;
+    const cP = cT > 0 ? Math.round((cD / cT) * 100) : 0;
+    const row = document.createElement("div"); row.className = "phase-stat";
+    row.innerHTML = `<div class="phase-stat-head"><span class="phase-stat-name">${cat.title}</span><span class="phase-stat-num">${cD} / ${cT} · ${cP}%</span></div><div class="phase-stat-bar"><div class="phase-stat-fill other-fill" style="width:0%"></div></div>`;
+    cs.appendChild(row);
+    requestAnimationFrame(() => { row.querySelector(".phase-stat-fill").style.width = cP + "%"; });
+  }
+
+  const allWatched = { ...watched, ...watchedOther };
+  const allItems = [...mcuAll.map(i => ({...i, source: "mcu"})), ...otherAll.map(i => ({...i, source: "other"}))];
+  const recentItems = allItems.filter(i => allWatched[i.id]);
+  
   const rl = document.getElementById("recentList"); rl.innerHTML = "";
-  if (wi.length === 0) { rl.innerHTML = `<div class="recent-empty"><div class="recent-empty-icon">🎬</div><div>Вы ещё не отметили ни одного проекта</div></div>`; return; }
-  wi.sort((a, b) => watched[b.id] - watched[a.id]).slice(0, 10).forEach((item, idx) => {
+  if (recentItems.length === 0) { rl.innerHTML = `<div class="recent-empty"><div class="recent-empty-icon">🎬</div><div>Вы ещё не отметили ни одного проекта</div></div>`; return; }
+  recentItems.sort((a, b) => allWatched[b.id] - allWatched[a.id]).slice(0, 10).forEach((item, idx) => {
     const el = document.createElement("div"); el.className = "recent-item";
-    el.innerHTML = `<div class="recent-num">${idx + 1}</div><div class="recent-info"><div class="recent-name">${item.title}</div><div class="recent-meta"><span class="item-type ${getTypeClass(item.type)}" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;">${getTypeLabel(item.type)}</span><span>${item.year}</span><span>· ${mcuData[item.phase].title}</span></div></div><div class="recent-date">${formatDate(watched[item.id])}</div>`;
+    const sourceLabel = item.source === "mcu" ? "MCU" : otherMarvelData[item.phase]?.title || "Другие";
+    el.innerHTML = `<div class="recent-num">${idx + 1}</div><div class="recent-info"><div class="recent-name">${item.title}</div><div class="recent-meta"><span class="item-type ${getTypeClass(item.type)}" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;">${getTypeLabel(item.type)}</span><span>${item.year}</span><span>· ${sourceLabel}</span></div></div><div class="recent-date">${formatDate(allWatched[item.id])}</div>`;
     rl.appendChild(el);
   });
 }
+
 applyRoute();
 </script>
 </body>
