@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MCU Чек-лист — Киновселенная Marvel</title>
+<link rel="icon" href="16.ico" type="image/x-icon">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}:root{--bg:#0d0d12;--bg-2:#15151d;--bg-3:#1e1e2a;--accent:#e23636;--accent-2:#ff4757;--text:#e8e8ee;--muted:#8a8a99;--border:#2a2a38;--done:#2ecc71;--film-color:#3498db;--series-color:#9b59b6;--special-color:#f39c12;--warning:#f39c12;--upcoming:#9b59b6}
 body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
@@ -20,7 +21,7 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
 .home-hero::after{content:"";position:absolute;top:-30%;right:-15%;width:700px;height:700px;background:radial-gradient(circle,rgba(226,54,54,0.25) 0%,transparent 65%);pointer-events:none;z-index:1;filter:blur(20px)}
 .home-content{position:relative;z-index:2;max-width:700px}
 .home-badge{display:inline-block;padding:6px 14px;background:rgba(226,54,54,0.2);border:1px solid var(--accent);color:var(--accent);border-radius:20px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;backdrop-filter:blur(6px)}
-.home-title{font-size:clamp(40px,7vw,80px);font-weight:900;line-height:1;margin-bottom:10px;letter-spacing:-1px;text-shadow:0 4px 30px rgba(0,0,0,0.8)}
+.home-title{font-size:clamp(60px,10vw,120px);font-weight:900;line-height:1;margin-bottom:0;letter-spacing:-1px;text-shadow:0 4px 30px rgba(0,0,0,0.8)}
 .home-title .red{color:var(--accent);text-shadow:0 0 30px rgba(226,54,54,0.6),0 4px 30px rgba(0,0,0,0.8)}
 .home-subtitle{font-size:clamp(20px,3vw,32px);color:var(--text);font-weight:300;margin-bottom:30px;text-shadow:0 2px 20px rgba(0,0,0,0.8)}
 .home-description{font-size:17px;line-height:1.7;color:#e0e0e8;margin-bottom:50px;max-width:600px;text-shadow:0 2px 15px rgba(0,0,0,0.9)}
@@ -187,7 +188,11 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
 .upcoming-card-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text)}
 .upcoming-card-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:15px}
 .upcoming-card-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
-@media(max-width:768px){.top-nav{padding:10px 15px}.nav-logo{font-size:16px}.nav-link{padding:6px 12px;font-size:12px}.home-hero{padding:40px 5%}.checklist-header{padding:15px 15px 15px 85px}.checklist-layout{padding-left:70px}.progress-sidebar{width:70px;padding:15px 5px}.progress-percent{font-size:18px}.progress-legend{display:none}.checklist-main{padding:20px 15px}.items-grid{grid-template-columns:1fr}.phase-title{font-size:20px}.profile-page,.upcoming-page{padding:25px 15px}.item-card.expanded .card-inner{flex-direction:column}.item-card.expanded .card-poster{width:100%;max-width:250px;height:auto;aspect-ratio:2/3;margin:16px auto}.item-card.expanded .card-content{padding:0 16px 16px}.item-card.expanded .item-details{margin-top:10px;padding-top:10px}.upcoming-grid{grid-template-columns:1fr}}
+.home-title-wrapper{display:flex;align-items:center;gap:30px;flex-wrap:nowrap;margin-bottom:20px}
+.home-title-wrapper .home-title{margin-bottom:0}
+.home-logo{max-width:200px;width:auto;flex-shrink:0;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.5))}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+@media(max-width:768px){.top-nav{padding:10px 15px}.nav-logo{font-size:16px}.nav-link{padding:6px 12px;font-size:12px}.home-hero{padding:40px 5%}.checklist-header{padding:15px 15px 15px 85px}.checklist-layout{padding-left:70px}.progress-sidebar{width:70px;padding:15px 5px}.progress-percent{font-size:18px}.progress-legend{display:none}.checklist-main{padding:20px 15px}.items-grid{grid-template-columns:1fr}.phase-title{font-size:20px}.profile-page,.upcoming-page{padding:25px 15px}.item-card.expanded .card-inner{flex-direction:column}.item-card.expanded .card-poster{width:100%;max-width:250px;height:auto;aspect-ratio:2/3;margin:16px auto}.item-card.expanded .card-content{padding:0 16px 16px}.item-card.expanded .item-details{margin-top:10px;padding-top:10px}.upcoming-grid{grid-template-columns:1fr}.home-title-wrapper{flex-wrap:wrap;justify-content:center;gap:15px}.home-logo{max-width:140px}}
 ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg-3);border-radius:5px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 </style>
 </head>
@@ -199,7 +204,7 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
     <a class="nav-link" data-page="home" onclick="navigate('home')">🏠 Главная</a>
     <a class="nav-link" data-page="mcu" onclick="navigate('mcu')">✅ Чек-лист MCU</a>
     <a class="nav-link" data-page="other" onclick="navigate('other')">🎬 Другие Marvel</a>
-    <a class="nav-link" data-page="upcoming" onclick="navigate('upcoming')">📅 Скоро выйдут</a>
+    <a class="nav-link" data-page="upcoming" onclick="navigate('upcoming')"> Скоро выйдут</a>
     <a class="nav-link" data-page="profile" onclick="navigate('profile')">👤 Мой прогресс</a>
   </div>
 </nav>
@@ -208,7 +213,10 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
   <div class="home-hero">
     <div class="home-content">
       <div class="home-badge">★ Киновселенная Marvel</div>
-      <h1 class="home-title"><span class="red">MARVEL</span>·MCU</h1>
+      <div class="home-title-wrapper">
+        <h1 class="home-title"><span class="red">MARVEL</span>·MCU</h1>
+        <img src="logo.png" alt="Marvel Logo" class="home-logo">
+      </div>
       <p class="home-subtitle">Твой личный чек-лист киновселенной</p>
       <p class="home-description">Отслеживай все <strong>фильмы</strong>, <strong>сериалы</strong> и <strong>спецвыпуски</strong> Киновселенной Marvel в одном месте.</p>
       <div class="home-buttons">
@@ -230,8 +238,8 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
     <div class="filters" id="filters">
       <button class="filter-btn active" data-filter="all">Все</button>
       <button class="filter-btn" data-filter="film">🎬 Фильмы</button>
-      <button class="filter-btn" data-filter="series">📺 Сериалы</button>
-      <button class="filter-btn" data-filter="special">🎃 Спецвыпуски</button>
+      <button class="filter-btn" data-filter="series"> Сериалы</button>
+      <button class="filter-btn" data-filter="special"> Спецвыпуски</button>
       <button class="filter-btn" data-filter="phase-1">Фаза 1</button>
       <button class="filter-btn" data-filter="phase-2">Фаза 2</button>
       <button class="filter-btn" data-filter="phase-3">Фаза 3</button>
@@ -263,12 +271,12 @@ body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t
       <button class="filter-btn active" data-filter="all">Все</button>
       <button class="filter-btn" data-filter="spider">🕷️ Человек-паук</button>
       <button class="filter-btn" data-filter="xmen">👁️ Люди Икс</button>
-      <button class="filter-btn" data-filter="deadpool">️ Дэдпул</button>
+      <button class="filter-btn" data-filter="deadpool">⚔️ Дэдпул</button>
       <button class="filter-btn" data-filter="fantastic">4️⃣ Фантастическая четвёрка</button>
       <button class="filter-btn" data-filter="venom">🕷️ Веном</button>
       <button class="filter-btn" data-filter="blade">🗡️ Блейд</button>
       <button class="filter-btn" data-filter="ghost">🔥 Призрачный гонщик</button>
-      <button class="filter-btn" data-filter="other"> Другие</button>
+      <button class="filter-btn" data-filter="other">🎬 Другие</button>
     </div>
   </div>
   <div class="checklist-layout">
